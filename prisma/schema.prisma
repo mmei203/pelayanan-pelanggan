@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model tabel_pelanggan {
+  id_pelanggan    Int               @id @default(autoincrement()) @db.UnsignedInt
+  no_kontak_pdam  String            @unique(map: "no_kontak_pdam") @db.VarChar(50)
+  nama_pelanggan  String            @db.VarChar(100)
+  no_hp           String            @db.VarChar(20)
+  alamat          String            @db.Text
+  created_at      DateTime?         @default(now()) @db.Timestamp(0)
+  tabel_pengaduan tabel_pengaduan[]
+}
+
+model tabel_pengaduan {
+  id_pengaduan     Int                    @id @default(autoincrement()) @db.UnsignedInt
+  id_pelanggan     Int                    @db.UnsignedInt
+  id_user          Int?                   @db.UnsignedInt
+  keluhan          String                 @db.Text
+  status           tabel_pengaduan_status @default(Pending)
+  tanggal_diterima DateTime?              @default(now()) @db.DateTime(0)
+  created_at       DateTime?              @default(now()) @db.Timestamp(0)
+  updated_at       DateTime?              @default(now()) @db.Timestamp(0)
+  tabel_pelanggan  tabel_pelanggan        @relation(fields: [id_pelanggan], references: [id_pelanggan], onDelete: Cascade, map: "fk_pengaduan_pelanggan")
+  tabel_user       tabel_user?            @relation(fields: [id_user], references: [id_user], map: "fk_pengaduan_user")
+
+  @@index([id_pelanggan], map: "fk_pengaduan_pelanggan")
+  @@index([id_user], map: "fk_pengaduan_user")
+}
+
+model tabel_user {
+  id_user         Int               @id @default(autoincrement()) @db.UnsignedInt
+  nama_user       String            @db.VarChar(100)
+  username        String            @unique(map: "username") @db.VarChar(50)
+  password        String            @db.VarChar(255)
+  tabel_pengaduan tabel_pengaduan[]
+}
+
+enum tabel_pengaduan_status {
+  Pending
+  On_Progress @map("On Progress")
+  Selesai
+}
