@@ -1,7 +1,6 @@
 import express from "express";
 import {config} from 'dotenv';
-import {connectDB, disconnectDB} from './db.js';
-
+import {connectDB, disconnectDB} from './src/config/db.js';
 
 config();
 connectDB();
@@ -12,8 +11,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-// // API Routes 
-
 // PORT
 const PORT = 3000;
 app.listen(PORT, () => {
@@ -22,7 +19,6 @@ app.listen(PORT, () => {
 
 
 // HANDLING EVENTS
-
 // handle unhandled promise rejection
 process.on("unhandledRejection", (err) => {
    console.error("unhandled rejection:",err);
