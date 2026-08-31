@@ -4,3 +4,4 @@
 - '/pelanggan/:id' PUT detail pelanggan
 - '/pelanggan/:status' GET all pelanggan by status
 - '/history' GET all history pelanggan
+- '/user' GET detail user

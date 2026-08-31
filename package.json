@@ -1,0 +1,32 @@
+{
+  "name": "webapp-pelayanan",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/mmei203/pelayanan-pelanggan#readme",
+  "bugs": {
+    "url": "https://github.com/mmei203/pelayanan-pelanggan/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mmei203/pelayanan-pelanggan.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.1",
+    "globals": "^17.11.0",
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
