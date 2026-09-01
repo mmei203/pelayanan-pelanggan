@@ -9,7 +9,14 @@ datasource db {
 
 model Pelanggan {
   id            String          @id @default(uuid())
-  namaPelanggan String
+  namaPelanggan String @db.VarChar(500)
+  alamat String @db.Text
+  noPdam Int
+  keluhan String @db.Text
+  noTelp Int
+  statusPelanggan StatusPelanggan
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum StatusPelanggan {
