@@ -1,3 +1,5 @@
+FILE DB.JS DI CONFIG JANGAN PERNAH DI OTAK ATIK
+
 # API Customer Service
 - '/pelanggan' GET all pelanggan
 - '/pelanggan/:id' GET detail pelanggan
