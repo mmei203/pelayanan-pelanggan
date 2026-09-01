@@ -145,3 +145,7 @@ vite.config.ts.timestamp-*
 
 # CUSTOM MAS
 .vscode
+/src/generated/prisma
+/test
+
+/generated/prisma

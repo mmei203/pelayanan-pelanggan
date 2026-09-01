@@ -15,17 +15,21 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^26.4.0",
     "eslint": "^10.9.1",
     "globals": "^17.11.0",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "prisma": "^7.10.0"
   },
   "dependencies": {
+    "@prisma/adapter-mariadb": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "@tidbcloud/serverless": "^0.3.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1"
   }

@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Pelanggan {
+  id            String          @id @default(uuid())
+  namaPelanggan String
+}
+
+enum StatusPelanggan {
+  PENDING
+  ON_PROGRESS
+  SELESAI
+}
