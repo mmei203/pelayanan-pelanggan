@@ -7,6 +7,9 @@ import authRoute from './src/routes/auth.routes.js';
 const server = express();
 const PORT = process.env.PORT;
 
+server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
+
 server.use('/pelanggan', pelangganRoute);
 server.use('/history', historyRoute);
 server.use('/auth', authRoute);
