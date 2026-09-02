@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import {prisma} from '../config/db.js';
 
 const errorMiddleware = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;

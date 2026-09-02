@@ -40,3 +40,30 @@ export const postPelanggan = async (req, res, next) => {
       next(error)
    }
 }
+
+// GET DETAIL PELANGGAN
+export const detailPelanggan = async (req, res, next) => {
+   try {
+      const {id} = req.params
+      const pelanggan = await prisma.pelanggan.findUnique({
+         where: {id}
+      });
+
+      if (!pelanggan) {
+         res.status(404).json({
+            success: false,
+            message: 'data tidak ditemukan'
+         })
+      }
+
+      return res.status(200).json({
+         success: true,
+         message: 'data berhasil muncul',
+         data: {
+            pelanggan
+         }
+      })
+   } catch (error) {
+      next(error)
+   }
+}
