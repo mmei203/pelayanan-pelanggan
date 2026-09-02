@@ -3,12 +3,14 @@ import 'dotenv/config'; // import variabel dari .env
 import pelangganRoute from "./src/routes/pelanggan.routes.js";
 import historyRoute from "./src/routes/history.routes.js";
 import authRoute from './src/routes/auth.routes.js';
+import errorMiddleware from "./src/middlewares/error.middleware.js";
 
 const server = express();
 const PORT = process.env.PORT;
 
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
+server.use(errorMiddleware);
 
 server.use('/pelanggan', pelangganRoute);
 server.use('/history', historyRoute);
