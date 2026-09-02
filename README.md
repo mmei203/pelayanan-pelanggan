@@ -1,8 +1,10 @@
 FILE DB.JS DI CONFIG JANGAN PERNAH DI OTAK ATIK
 
 # how to use it (in case aku ngulang)
-npm install
-npm run dev
+1. npm install
+2. npm run dev
+3. npx prisma init
+4. npx prisma generate
 
 # API Customer Service
 - '/pelanggan' GET all pelanggan (sudah)
