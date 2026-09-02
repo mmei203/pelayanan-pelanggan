@@ -9,7 +9,7 @@ FILE DB.JS DI CONFIG JANGAN PERNAH DI OTAK ATIK
 # API Customer Service
 - '/pelanggan' GET all pelanggan (sudah)
 - '/pelanggan' POST pelanggan (sudah)
-- '/pelanggan/:id' GET detail pelanggan
+- '/pelanggan/:id' GET detail pelanggan (sudah)
 - '/pelanggan/:id' PUT detail pelanggan
 - '/pelanggan/:status' GET all pelanggan by status
 - '/history' GET all history pelanggan
