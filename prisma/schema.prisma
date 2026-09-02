@@ -11,10 +11,10 @@ model Pelanggan {
   id            String          @id @default(uuid())
   namaPelanggan String @db.VarChar(500)
   alamat String @db.Text
-  noPdam Int
+  noPdam String
   keluhan String @db.Text
-  noTelp Int
-  statusPelanggan StatusPelanggan
+  noTelp String
+  statusPelanggan StatusPelanggan @default(PENDING)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

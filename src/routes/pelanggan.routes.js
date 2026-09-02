@@ -10,7 +10,7 @@ pelangganRoute.get('/',getPelanggan);
 pelangganRoute.get('/:id',(req, res) =>  res.json({message: "DETAIL PELANGGAN"}));
 
 // ADD PELANGGAN
-pelangganRoute.post('/', postPelanggan);
+pelangganRoute.post('/tambah-pelanggan', postPelanggan);
 
 // EDIT PELANGGAN
 pelangganRoute.put('/:id',(req, res) =>  res.json({message: 'EDIT PELANGGAN'}));

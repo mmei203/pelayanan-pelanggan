@@ -321,7 +321,7 @@ export type PelangganCreateInput = {
   noPdam: number
   keluhan: string
   noTelp: number
-  statusPelanggan: $Enums.StatusPelanggan
+  statusPelanggan?: $Enums.StatusPelanggan
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -333,7 +333,7 @@ export type PelangganUncheckedCreateInput = {
   noPdam: number
   keluhan: string
   noTelp: number
-  statusPelanggan: $Enums.StatusPelanggan
+  statusPelanggan?: $Enums.StatusPelanggan
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -369,7 +369,7 @@ export type PelangganCreateManyInput = {
   noPdam: number
   keluhan: string
   noTelp: number
-  statusPelanggan: $Enums.StatusPelanggan
+  statusPelanggan?: $Enums.StatusPelanggan
   createdAt?: Date | string
   updatedAt?: Date | string
 }

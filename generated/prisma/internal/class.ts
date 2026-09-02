@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.10.0",
   "engineVersion": "0edf323efd1d98336f3f0a68684b56f689b900d3",
   "activeProvider": "mysql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n}\n\nmodel Pelanggan {\n  id              String          @id @default(uuid())\n  namaPelanggan   String          @db.VarChar(500)\n  alamat          String          @db.Text\n  noPdam          Int\n  keluhan         String          @db.Text\n  noTelp          Int\n  statusPelanggan StatusPelanggan\n  createdAt       DateTime        @default(now())\n  updatedAt       DateTime        @updatedAt\n}\n\nenum StatusPelanggan {\n  PENDING\n  ON_PROGRESS\n  SELESAI\n}\n",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n}\n\nmodel Pelanggan {\n  id              String          @id @default(uuid())\n  namaPelanggan   String          @db.VarChar(500)\n  alamat          String          @db.Text\n  noPdam          Int\n  keluhan         String          @db.Text\n  noTelp          Int\n  statusPelanggan StatusPelanggan @default(PENDING)\n  createdAt       DateTime        @default(now())\n  updatedAt       DateTime        @updatedAt\n}\n\nenum StatusPelanggan {\n  PENDING\n  ON_PROGRESS\n  SELESAI\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},

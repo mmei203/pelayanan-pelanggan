@@ -4,7 +4,7 @@ import {prisma} from '../config/db.js';
 export const getPelanggan = async (req, res, next) => {
    try {
       const pelanggan = await prisma.pelanggan.findMany();
-      res.status(200).json({
+      return res.status(200).json({
          success: true,
          message: 'data berhasil diambil',
          data: {
@@ -19,7 +19,7 @@ export const getPelanggan = async (req, res, next) => {
 // CREATE PELANGGAN
 export const postPelanggan = async (req, res, next) => {
    try {
-      const {namaPelanggan, alamat, noPdam, keluhan, noTelp, statusPelanggan} = req.body;
+      const {namaPelanggan, alamat, noPdam, keluhan, noTelp} = req.body;
       const createPelanggan = await prisma.pelanggan.create({
          data: {
             namaPelanggan,
@@ -27,10 +27,9 @@ export const postPelanggan = async (req, res, next) => {
             noPdam,
             keluhan,
             noTelp,
-            statusPelanggan,
          }
       });
-      res.status(201).json({
+      return res.status(201).json({
          success: true,
          message: 'berhasil menambahkan pelanggan',
          data: {

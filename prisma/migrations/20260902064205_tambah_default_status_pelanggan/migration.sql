@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Pelanggan` MODIFY `statusPelanggan` ENUM('PENDING', 'ON_PROGRESS', 'SELESAI') NOT NULL DEFAULT 'PENDING';
