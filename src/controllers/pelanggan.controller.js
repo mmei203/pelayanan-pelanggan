@@ -93,3 +93,30 @@ export const updatePelanggan = async (req, res, next) => {
       next(error);
    }
 }
+
+// GET PELANGGAN BY STATUS
+export const pelangganByStatus = async (req, res, next) => {
+   try {
+      const {statusPelanggan} = req.params;
+      const {namaPelanggan, alamat, noPdam, keluhan, noTelp} = req.body;
+      const pelanggan = await prisma.pelanggan.findMany({
+         where: {statusPelanggan},
+         data: {
+            namaPelanggan,
+            alamat,
+            noPdam,
+            noTelp,
+            keluhan
+         }
+      });
+      return res.status(200).json({
+         success: true,
+         message: `Berhasil ambil data by status : ${statusPelanggan}`,
+         data: {
+            pelanggan
+         }
+      })
+   } catch (error) {
+      next(error)
+   }
+}
