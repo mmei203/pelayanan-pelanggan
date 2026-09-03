@@ -20,29 +20,17 @@ export type PelangganModel = runtime.Types.Result.DefaultSelection<Prisma.$Pelan
 
 export type AggregatePelanggan = {
   _count: PelangganCountAggregateOutputType | null
-  _avg: PelangganAvgAggregateOutputType | null
-  _sum: PelangganSumAggregateOutputType | null
   _min: PelangganMinAggregateOutputType | null
   _max: PelangganMaxAggregateOutputType | null
-}
-
-export type PelangganAvgAggregateOutputType = {
-  noPdam: number | null
-  noTelp: number | null
-}
-
-export type PelangganSumAggregateOutputType = {
-  noPdam: number | null
-  noTelp: number | null
 }
 
 export type PelangganMinAggregateOutputType = {
   id: string | null
   namaPelanggan: string | null
   alamat: string | null
-  noPdam: number | null
+  noPdam: string | null
   keluhan: string | null
-  noTelp: number | null
+  noTelp: string | null
   statusPelanggan: $Enums.StatusPelanggan | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -52,9 +40,9 @@ export type PelangganMaxAggregateOutputType = {
   id: string | null
   namaPelanggan: string | null
   alamat: string | null
-  noPdam: number | null
+  noPdam: string | null
   keluhan: string | null
-  noTelp: number | null
+  noTelp: string | null
   statusPelanggan: $Enums.StatusPelanggan | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -73,16 +61,6 @@ export type PelangganCountAggregateOutputType = {
   _all: number
 }
 
-
-export type PelangganAvgAggregateInputType = {
-  noPdam?: true
-  noTelp?: true
-}
-
-export type PelangganSumAggregateInputType = {
-  noPdam?: true
-  noTelp?: true
-}
 
 export type PelangganMinAggregateInputType = {
   id?: true
@@ -159,18 +137,6 @@ export type PelangganAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inte
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: PelangganAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: PelangganSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: PelangganMinAggregateInputType
@@ -201,8 +167,6 @@ export type PelangganGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   _count?: PelangganCountAggregateInputType | true
-  _avg?: PelangganAvgAggregateInputType
-  _sum?: PelangganSumAggregateInputType
   _min?: PelangganMinAggregateInputType
   _max?: PelangganMaxAggregateInputType
 }
@@ -211,15 +175,13 @@ export type PelangganGroupByOutputType = {
   id: string
   namaPelanggan: string
   alamat: string
-  noPdam: number
+  noPdam: string
   keluhan: string
-  noTelp: number
+  noTelp: string
   statusPelanggan: $Enums.StatusPelanggan
   createdAt: Date
   updatedAt: Date
   _count: PelangganCountAggregateOutputType | null
-  _avg: PelangganAvgAggregateOutputType | null
-  _sum: PelangganSumAggregateOutputType | null
   _min: PelangganMinAggregateOutputType | null
   _max: PelangganMaxAggregateOutputType | null
 }
@@ -246,9 +208,9 @@ export type PelangganWhereInput = {
   id?: Prisma.StringFilter<"Pelanggan"> | string
   namaPelanggan?: Prisma.StringFilter<"Pelanggan"> | string
   alamat?: Prisma.StringFilter<"Pelanggan"> | string
-  noPdam?: Prisma.IntFilter<"Pelanggan"> | number
+  noPdam?: Prisma.StringFilter<"Pelanggan"> | string
   keluhan?: Prisma.StringFilter<"Pelanggan"> | string
-  noTelp?: Prisma.IntFilter<"Pelanggan"> | number
+  noTelp?: Prisma.StringFilter<"Pelanggan"> | string
   statusPelanggan?: Prisma.EnumStatusPelangganFilter<"Pelanggan"> | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFilter<"Pelanggan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Pelanggan"> | Date | string
@@ -274,9 +236,9 @@ export type PelangganWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PelangganWhereInput | Prisma.PelangganWhereInput[]
   namaPelanggan?: Prisma.StringFilter<"Pelanggan"> | string
   alamat?: Prisma.StringFilter<"Pelanggan"> | string
-  noPdam?: Prisma.IntFilter<"Pelanggan"> | number
+  noPdam?: Prisma.StringFilter<"Pelanggan"> | string
   keluhan?: Prisma.StringFilter<"Pelanggan"> | string
-  noTelp?: Prisma.IntFilter<"Pelanggan"> | number
+  noTelp?: Prisma.StringFilter<"Pelanggan"> | string
   statusPelanggan?: Prisma.EnumStatusPelangganFilter<"Pelanggan"> | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFilter<"Pelanggan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Pelanggan"> | Date | string
@@ -293,10 +255,8 @@ export type PelangganOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PelangganCountOrderByAggregateInput
-  _avg?: Prisma.PelangganAvgOrderByAggregateInput
   _max?: Prisma.PelangganMaxOrderByAggregateInput
   _min?: Prisma.PelangganMinOrderByAggregateInput
-  _sum?: Prisma.PelangganSumOrderByAggregateInput
 }
 
 export type PelangganScalarWhereWithAggregatesInput = {
@@ -306,9 +266,9 @@ export type PelangganScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Pelanggan"> | string
   namaPelanggan?: Prisma.StringWithAggregatesFilter<"Pelanggan"> | string
   alamat?: Prisma.StringWithAggregatesFilter<"Pelanggan"> | string
-  noPdam?: Prisma.IntWithAggregatesFilter<"Pelanggan"> | number
+  noPdam?: Prisma.StringWithAggregatesFilter<"Pelanggan"> | string
   keluhan?: Prisma.StringWithAggregatesFilter<"Pelanggan"> | string
-  noTelp?: Prisma.IntWithAggregatesFilter<"Pelanggan"> | number
+  noTelp?: Prisma.StringWithAggregatesFilter<"Pelanggan"> | string
   statusPelanggan?: Prisma.EnumStatusPelangganWithAggregatesFilter<"Pelanggan"> | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Pelanggan"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Pelanggan"> | Date | string
@@ -318,9 +278,9 @@ export type PelangganCreateInput = {
   id?: string
   namaPelanggan: string
   alamat: string
-  noPdam: number
+  noPdam: string
   keluhan: string
-  noTelp: number
+  noTelp: string
   statusPelanggan?: $Enums.StatusPelanggan
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -330,9 +290,9 @@ export type PelangganUncheckedCreateInput = {
   id?: string
   namaPelanggan: string
   alamat: string
-  noPdam: number
+  noPdam: string
   keluhan: string
-  noTelp: number
+  noTelp: string
   statusPelanggan?: $Enums.StatusPelanggan
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -342,9 +302,9 @@ export type PelangganUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   namaPelanggan?: Prisma.StringFieldUpdateOperationsInput | string
   alamat?: Prisma.StringFieldUpdateOperationsInput | string
-  noPdam?: Prisma.IntFieldUpdateOperationsInput | number
+  noPdam?: Prisma.StringFieldUpdateOperationsInput | string
   keluhan?: Prisma.StringFieldUpdateOperationsInput | string
-  noTelp?: Prisma.IntFieldUpdateOperationsInput | number
+  noTelp?: Prisma.StringFieldUpdateOperationsInput | string
   statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -354,9 +314,9 @@ export type PelangganUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   namaPelanggan?: Prisma.StringFieldUpdateOperationsInput | string
   alamat?: Prisma.StringFieldUpdateOperationsInput | string
-  noPdam?: Prisma.IntFieldUpdateOperationsInput | number
+  noPdam?: Prisma.StringFieldUpdateOperationsInput | string
   keluhan?: Prisma.StringFieldUpdateOperationsInput | string
-  noTelp?: Prisma.IntFieldUpdateOperationsInput | number
+  noTelp?: Prisma.StringFieldUpdateOperationsInput | string
   statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -366,9 +326,9 @@ export type PelangganCreateManyInput = {
   id?: string
   namaPelanggan: string
   alamat: string
-  noPdam: number
+  noPdam: string
   keluhan: string
-  noTelp: number
+  noTelp: string
   statusPelanggan?: $Enums.StatusPelanggan
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -378,9 +338,9 @@ export type PelangganUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   namaPelanggan?: Prisma.StringFieldUpdateOperationsInput | string
   alamat?: Prisma.StringFieldUpdateOperationsInput | string
-  noPdam?: Prisma.IntFieldUpdateOperationsInput | number
+  noPdam?: Prisma.StringFieldUpdateOperationsInput | string
   keluhan?: Prisma.StringFieldUpdateOperationsInput | string
-  noTelp?: Prisma.IntFieldUpdateOperationsInput | number
+  noTelp?: Prisma.StringFieldUpdateOperationsInput | string
   statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -390,9 +350,9 @@ export type PelangganUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   namaPelanggan?: Prisma.StringFieldUpdateOperationsInput | string
   alamat?: Prisma.StringFieldUpdateOperationsInput | string
-  noPdam?: Prisma.IntFieldUpdateOperationsInput | number
+  noPdam?: Prisma.StringFieldUpdateOperationsInput | string
   keluhan?: Prisma.StringFieldUpdateOperationsInput | string
-  noTelp?: Prisma.IntFieldUpdateOperationsInput | number
+  noTelp?: Prisma.StringFieldUpdateOperationsInput | string
   statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -414,11 +374,6 @@ export type PelangganCountOrderByAggregateInput = {
   statusPelanggan?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type PelangganAvgOrderByAggregateInput = {
-  noPdam?: Prisma.SortOrder
-  noTelp?: Prisma.SortOrder
 }
 
 export type PelangganMaxOrderByAggregateInput = {
@@ -445,21 +400,8 @@ export type PelangganMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type PelangganSumOrderByAggregateInput = {
-  noPdam?: Prisma.SortOrder
-  noTelp?: Prisma.SortOrder
-}
-
 export type StringFieldUpdateOperationsInput = {
   set?: string
-}
-
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
 }
 
 export type EnumStatusPelangganFieldUpdateOperationsInput = {
@@ -507,9 +449,9 @@ export type $PelangganPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     id: string
     namaPelanggan: string
     alamat: string
-    noPdam: number
+    noPdam: string
     keluhan: string
-    noTelp: number
+    noTelp: string
     statusPelanggan: $Enums.StatusPelanggan
     createdAt: Date
     updatedAt: Date
@@ -885,9 +827,9 @@ export interface PelangganFieldRefs {
   readonly id: Prisma.FieldRef<"Pelanggan", 'String'>
   readonly namaPelanggan: Prisma.FieldRef<"Pelanggan", 'String'>
   readonly alamat: Prisma.FieldRef<"Pelanggan", 'String'>
-  readonly noPdam: Prisma.FieldRef<"Pelanggan", 'Int'>
+  readonly noPdam: Prisma.FieldRef<"Pelanggan", 'String'>
   readonly keluhan: Prisma.FieldRef<"Pelanggan", 'String'>
-  readonly noTelp: Prisma.FieldRef<"Pelanggan", 'Int'>
+  readonly noTelp: Prisma.FieldRef<"Pelanggan", 'String'>
   readonly statusPelanggan: Prisma.FieldRef<"Pelanggan", 'StatusPelanggan'>
   readonly createdAt: Prisma.FieldRef<"Pelanggan", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Pelanggan", 'DateTime'>

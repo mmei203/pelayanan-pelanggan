@@ -1,5 +1,10 @@
 import {Router} from 'express';
-import { detailPelanggan, getPelanggan, postPelanggan } from '../controllers/pelanggan.controller.js';
+import { 
+   detailPelanggan, 
+   getPelanggan, 
+   postPelanggan, 
+   updatePelanggan 
+} from '../controllers/pelanggan.controller.js';
 
 const pelangganRoute =  Router();
 
@@ -13,6 +18,6 @@ pelangganRoute.get('/:id',detailPelanggan);
 pelangganRoute.post('/tambah-pelanggan', postPelanggan);
 
 // EDIT PELANGGAN
-pelangganRoute.put('/:id',(req, res) =>  res.json({message: 'EDIT PELANGGAN'}));
+pelangganRoute.put('/:id', updatePelanggan);
 
 export default pelangganRoute;

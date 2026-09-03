@@ -97,7 +97,9 @@ export const PelangganOrderByRelevanceFieldEnum = {
   id: 'id',
   namaPelanggan: 'namaPelanggan',
   alamat: 'alamat',
-  keluhan: 'keluhan'
+  noPdam: 'noPdam',
+  keluhan: 'keluhan',
+  noTelp: 'noTelp'
 } as const
 
 export type PelangganOrderByRelevanceFieldEnum = (typeof PelangganOrderByRelevanceFieldEnum)[keyof typeof PelangganOrderByRelevanceFieldEnum]

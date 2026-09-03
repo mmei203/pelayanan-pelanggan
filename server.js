@@ -15,7 +15,7 @@ const PORT = process.env.PORT;
 // MIDDLEWARES
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
-server.use(errorMiddleware);
+// server.use(errorMiddleware);
 server.use(cors());
 server.use(morgan('dev'));
 server.use(helmet());
@@ -23,7 +23,7 @@ server.use(helmet());
 const limiter = rateLimit({
    windowMs: 5 * 60 * 1000, //timeout sampe kapan
    limit: 20,
-   message: "too much request"
+   message: "TOO MANY REQUEST"
 })
 server.use(limiter);
 

@@ -67,3 +67,29 @@ export const detailPelanggan = async (req, res, next) => {
       next(error)
    }
 }
+
+export const updatePelanggan = async (req, res, next) => {
+   try {
+      const {id} = req.params;
+      const {namaPelanggan, noPdam, noTelp, alamat, keluhan} = req.body;
+      const pelanggan = await prisma.pelanggan.update({
+         where: {id},
+         data: {
+            namaPelanggan,
+            noPdam,
+            noTelp,
+            alamat,
+            keluhan
+         }
+      });
+      return res.status(201).json({
+         success: true,
+         message: 'berhasil update pelanggan',
+         data: {
+            pelanggan
+         }
+      })
+   } catch (error) {
+      next(error);
+   }
+}

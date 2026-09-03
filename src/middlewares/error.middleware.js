@@ -6,7 +6,7 @@ const errorMiddleware = (err, req, res, next) => {
 
   console.error(err);
 
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  if (err instanceof prisma.PrismaClientKnownRequestError) {
     switch (err.code) {
       case 'P2002':
         message = `Nilai duplikat pada field: ${err.meta?.target || 'tertentu'}`;
@@ -24,7 +24,7 @@ const errorMiddleware = (err, req, res, next) => {
   }
 
   // Menangkap input Enum atau Tipe Data yang tidak sesuai Schema Prisma
-  if (err instanceof Prisma.PrismaClientValidationError) {
+  if (err instanceof prisma.PrismaClientValidationError) {
     message = 'Format atau tipe data input tidak valid (periksa statusPelanggan / noPdam)';
     statusCode = 400;
   }
