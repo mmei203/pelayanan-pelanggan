@@ -1,4 +1,5 @@
 FILE DB.JS DI CONFIG JANGAN PERNAH DI OTAK ATIK
+BELUM ADA DOKUMENTASI
 
 # how to use it (in case aku ngulang)
 <code>
