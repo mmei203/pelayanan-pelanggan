@@ -12,9 +12,9 @@ FILE DB.JS DI CONFIG JANGAN PERNAH DI OTAK ATIK
 - '/pelanggan' GET all pelanggan (sudah)
 - '/pelanggan' POST pelanggan (sudah)
 - '/pelanggan/:id' GET detail pelanggan (sudah)
-- '/pelanggan/:id' PUT detail pelanggan
-- '/pelanggan/:status' GET all pelanggan by status
-- '/history' GET all history pelanggan
+- '/pelanggan/:id' PUT detail pelanggan (sudah)
+- '/pelanggan/:status' GET all pelanggan by status (harusnya sudah)
+- '/history' GET all history pelanggan (harusnya sudah)
 - '/user' GET detail user
 
 ## CATATAN LAIN

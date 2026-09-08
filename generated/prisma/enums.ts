@@ -16,3 +16,12 @@ export const StatusPelanggan = {
 } as const
 
 export type StatusPelanggan = (typeof StatusPelanggan)[keyof typeof StatusPelanggan]
+
+
+export const roleUser = {
+  CUSTOMER_SERVICE: 'CUSTOMER_SERVICE',
+  OPERATOR: 'OPERATOR',
+  PENGAWAS: 'PENGAWAS'
+} as const
+
+export type roleUser = (typeof roleUser)[keyof typeof roleUser]

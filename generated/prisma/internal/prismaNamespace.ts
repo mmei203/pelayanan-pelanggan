@@ -397,7 +397,9 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Pelanggan: 'Pelanggan'
+  Pelanggan: 'Pelanggan',
+  User: 'User',
+  History: 'History'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -413,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "pelanggan"
+    modelProps: "pelanggan" | "user" | "history"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -483,6 +485,138 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    User: {
+      payload: Prisma.$UserPayload<ExtArgs>
+      fields: Prisma.UserFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        findFirst: {
+          args: Prisma.UserFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        findMany: {
+          args: Prisma.UserFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>[]
+        }
+        create: {
+          args: Prisma.UserCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        createMany: {
+          args: Prisma.UserCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.UserDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        update: {
+          args: Prisma.UserUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.UserUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPayload>
+        }
+        aggregate: {
+          args: Prisma.UserAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUser>
+        }
+        groupBy: {
+          args: Prisma.UserGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    History: {
+      payload: Prisma.$HistoryPayload<ExtArgs>
+      fields: Prisma.HistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.HistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        findMany: {
+          args: Prisma.HistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>[]
+        }
+        create: {
+          args: Prisma.HistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        createMany: {
+          args: Prisma.HistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.HistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        update: {
+          args: Prisma.HistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.HistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.HistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.HistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHistory>
+        }
+        groupBy: {
+          args: Prisma.HistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HistoryCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -531,10 +665,35 @@ export const PelangganScalarFieldEnum = {
   noTelp: 'noTelp',
   statusPelanggan: 'statusPelanggan',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  finished: 'finished'
 } as const
 
 export type PelangganScalarFieldEnum = (typeof PelangganScalarFieldEnum)[keyof typeof PelangganScalarFieldEnum]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  email: 'email',
+  password: 'password',
+  roleUser: 'roleUser'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const HistoryScalarFieldEnum = {
+  id: 'id',
+  pelangganId: 'pelangganId',
+  namaPelanggan: 'namaPelanggan',
+  keluhan: 'keluhan',
+  tanggalLaporan: 'tanggalLaporan',
+  tanggalSelesai: 'tanggalSelesai',
+  createdAt: 'createdAt'
+} as const
+
+export type HistoryScalarFieldEnum = (typeof HistoryScalarFieldEnum)[keyof typeof HistoryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -543,6 +702,14 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 export const PelangganOrderByRelevanceFieldEnum = {
@@ -555,6 +722,26 @@ export const PelangganOrderByRelevanceFieldEnum = {
 } as const
 
 export type PelangganOrderByRelevanceFieldEnum = (typeof PelangganOrderByRelevanceFieldEnum)[keyof typeof PelangganOrderByRelevanceFieldEnum]
+
+
+export const UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  username: 'username',
+  email: 'email',
+  password: 'password'
+} as const
+
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const HistoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  pelangganId: 'pelangganId',
+  namaPelanggan: 'namaPelanggan',
+  keluhan: 'keluhan'
+} as const
+
+export type HistoryOrderByRelevanceFieldEnum = (typeof HistoryOrderByRelevanceFieldEnum)[keyof typeof HistoryOrderByRelevanceFieldEnum]
 
 
 
@@ -581,6 +768,13 @@ export type EnumStatusPelangganFieldRefInput<$PrismaModel> = FieldRefInputType<$
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'roleUser'
+ */
+export type EnumroleUserFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'roleUser'>
     
 
 
@@ -742,6 +936,8 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   pelanggan?: Prisma.PelangganOmit
+  user?: Prisma.UserOmit
+  history?: Prisma.HistoryOmit
 }
 
 /* Types for Logging */

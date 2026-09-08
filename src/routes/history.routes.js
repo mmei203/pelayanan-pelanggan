@@ -1,7 +1,8 @@
 import {Router} from 'express';
+import { getHistory } from '../controllers/history.controller';
 
 const historyRoute = Router();
 
-historyRoute.get('/', (req, res) => res.json({message: 'LIST HISTORY'}));
+historyRoute.get('/', getHistory);
 
 export default historyRoute;

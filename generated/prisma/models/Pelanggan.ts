@@ -34,6 +34,7 @@ export type PelangganMinAggregateOutputType = {
   statusPelanggan: $Enums.StatusPelanggan | null
   createdAt: Date | null
   updatedAt: Date | null
+  finished: Date | null
 }
 
 export type PelangganMaxAggregateOutputType = {
@@ -46,6 +47,7 @@ export type PelangganMaxAggregateOutputType = {
   statusPelanggan: $Enums.StatusPelanggan | null
   createdAt: Date | null
   updatedAt: Date | null
+  finished: Date | null
 }
 
 export type PelangganCountAggregateOutputType = {
@@ -58,6 +60,7 @@ export type PelangganCountAggregateOutputType = {
   statusPelanggan: number
   createdAt: number
   updatedAt: number
+  finished: number
   _all: number
 }
 
@@ -72,6 +75,7 @@ export type PelangganMinAggregateInputType = {
   statusPelanggan?: true
   createdAt?: true
   updatedAt?: true
+  finished?: true
 }
 
 export type PelangganMaxAggregateInputType = {
@@ -84,6 +88,7 @@ export type PelangganMaxAggregateInputType = {
   statusPelanggan?: true
   createdAt?: true
   updatedAt?: true
+  finished?: true
 }
 
 export type PelangganCountAggregateInputType = {
@@ -96,6 +101,7 @@ export type PelangganCountAggregateInputType = {
   statusPelanggan?: true
   createdAt?: true
   updatedAt?: true
+  finished?: true
   _all?: true
 }
 
@@ -181,6 +187,7 @@ export type PelangganGroupByOutputType = {
   statusPelanggan: $Enums.StatusPelanggan
   createdAt: Date
   updatedAt: Date
+  finished: Date | null
   _count: PelangganCountAggregateOutputType | null
   _min: PelangganMinAggregateOutputType | null
   _max: PelangganMaxAggregateOutputType | null
@@ -214,6 +221,8 @@ export type PelangganWhereInput = {
   statusPelanggan?: Prisma.EnumStatusPelangganFilter<"Pelanggan"> | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFilter<"Pelanggan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Pelanggan"> | Date | string
+  finished?: Prisma.DateTimeNullableFilter<"Pelanggan"> | Date | string | null
+  history?: Prisma.XOR<Prisma.HistoryNullableScalarRelationFilter, Prisma.HistoryWhereInput> | null
 }
 
 export type PelangganOrderByWithRelationInput = {
@@ -226,6 +235,8 @@ export type PelangganOrderByWithRelationInput = {
   statusPelanggan?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  finished?: Prisma.SortOrderInput | Prisma.SortOrder
+  history?: Prisma.HistoryOrderByWithRelationInput
   _relevance?: Prisma.PelangganOrderByRelevanceInput
 }
 
@@ -242,6 +253,8 @@ export type PelangganWhereUniqueInput = Prisma.AtLeast<{
   statusPelanggan?: Prisma.EnumStatusPelangganFilter<"Pelanggan"> | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFilter<"Pelanggan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Pelanggan"> | Date | string
+  finished?: Prisma.DateTimeNullableFilter<"Pelanggan"> | Date | string | null
+  history?: Prisma.XOR<Prisma.HistoryNullableScalarRelationFilter, Prisma.HistoryWhereInput> | null
 }, "id">
 
 export type PelangganOrderByWithAggregationInput = {
@@ -254,6 +267,7 @@ export type PelangganOrderByWithAggregationInput = {
   statusPelanggan?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  finished?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.PelangganCountOrderByAggregateInput
   _max?: Prisma.PelangganMaxOrderByAggregateInput
   _min?: Prisma.PelangganMinOrderByAggregateInput
@@ -272,6 +286,7 @@ export type PelangganScalarWhereWithAggregatesInput = {
   statusPelanggan?: Prisma.EnumStatusPelangganWithAggregatesFilter<"Pelanggan"> | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Pelanggan"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Pelanggan"> | Date | string
+  finished?: Prisma.DateTimeNullableWithAggregatesFilter<"Pelanggan"> | Date | string | null
 }
 
 export type PelangganCreateInput = {
@@ -284,6 +299,8 @@ export type PelangganCreateInput = {
   statusPelanggan?: $Enums.StatusPelanggan
   createdAt?: Date | string
   updatedAt?: Date | string
+  finished?: Date | string | null
+  history?: Prisma.HistoryCreateNestedOneWithoutPelangganInput
 }
 
 export type PelangganUncheckedCreateInput = {
@@ -296,6 +313,8 @@ export type PelangganUncheckedCreateInput = {
   statusPelanggan?: $Enums.StatusPelanggan
   createdAt?: Date | string
   updatedAt?: Date | string
+  finished?: Date | string | null
+  history?: Prisma.HistoryUncheckedCreateNestedOneWithoutPelangganInput
 }
 
 export type PelangganUpdateInput = {
@@ -308,6 +327,8 @@ export type PelangganUpdateInput = {
   statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finished?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  history?: Prisma.HistoryUpdateOneWithoutPelangganNestedInput
 }
 
 export type PelangganUncheckedUpdateInput = {
@@ -320,6 +341,8 @@ export type PelangganUncheckedUpdateInput = {
   statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finished?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  history?: Prisma.HistoryUncheckedUpdateOneWithoutPelangganNestedInput
 }
 
 export type PelangganCreateManyInput = {
@@ -332,6 +355,7 @@ export type PelangganCreateManyInput = {
   statusPelanggan?: $Enums.StatusPelanggan
   createdAt?: Date | string
   updatedAt?: Date | string
+  finished?: Date | string | null
 }
 
 export type PelangganUpdateManyMutationInput = {
@@ -344,6 +368,7 @@ export type PelangganUpdateManyMutationInput = {
   statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finished?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PelangganUncheckedUpdateManyInput = {
@@ -356,6 +381,7 @@ export type PelangganUncheckedUpdateManyInput = {
   statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finished?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PelangganOrderByRelevanceInput = {
@@ -374,6 +400,7 @@ export type PelangganCountOrderByAggregateInput = {
   statusPelanggan?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  finished?: Prisma.SortOrder
 }
 
 export type PelangganMaxOrderByAggregateInput = {
@@ -386,6 +413,7 @@ export type PelangganMaxOrderByAggregateInput = {
   statusPelanggan?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  finished?: Prisma.SortOrder
 }
 
 export type PelangganMinOrderByAggregateInput = {
@@ -398,6 +426,12 @@ export type PelangganMinOrderByAggregateInput = {
   statusPelanggan?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  finished?: Prisma.SortOrder
+}
+
+export type PelangganScalarRelationFilter = {
+  is?: Prisma.PelangganWhereInput
+  isNot?: Prisma.PelangganWhereInput
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -412,6 +446,92 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type PelangganCreateNestedOneWithoutHistoryInput = {
+  create?: Prisma.XOR<Prisma.PelangganCreateWithoutHistoryInput, Prisma.PelangganUncheckedCreateWithoutHistoryInput>
+  connectOrCreate?: Prisma.PelangganCreateOrConnectWithoutHistoryInput
+  connect?: Prisma.PelangganWhereUniqueInput
+}
+
+export type PelangganUpdateOneRequiredWithoutHistoryNestedInput = {
+  create?: Prisma.XOR<Prisma.PelangganCreateWithoutHistoryInput, Prisma.PelangganUncheckedCreateWithoutHistoryInput>
+  connectOrCreate?: Prisma.PelangganCreateOrConnectWithoutHistoryInput
+  upsert?: Prisma.PelangganUpsertWithoutHistoryInput
+  connect?: Prisma.PelangganWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PelangganUpdateToOneWithWhereWithoutHistoryInput, Prisma.PelangganUpdateWithoutHistoryInput>, Prisma.PelangganUncheckedUpdateWithoutHistoryInput>
+}
+
+export type PelangganCreateWithoutHistoryInput = {
+  id?: string
+  namaPelanggan: string
+  alamat: string
+  noPdam: string
+  keluhan: string
+  noTelp: string
+  statusPelanggan?: $Enums.StatusPelanggan
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  finished?: Date | string | null
+}
+
+export type PelangganUncheckedCreateWithoutHistoryInput = {
+  id?: string
+  namaPelanggan: string
+  alamat: string
+  noPdam: string
+  keluhan: string
+  noTelp: string
+  statusPelanggan?: $Enums.StatusPelanggan
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  finished?: Date | string | null
+}
+
+export type PelangganCreateOrConnectWithoutHistoryInput = {
+  where: Prisma.PelangganWhereUniqueInput
+  create: Prisma.XOR<Prisma.PelangganCreateWithoutHistoryInput, Prisma.PelangganUncheckedCreateWithoutHistoryInput>
+}
+
+export type PelangganUpsertWithoutHistoryInput = {
+  update: Prisma.XOR<Prisma.PelangganUpdateWithoutHistoryInput, Prisma.PelangganUncheckedUpdateWithoutHistoryInput>
+  create: Prisma.XOR<Prisma.PelangganCreateWithoutHistoryInput, Prisma.PelangganUncheckedCreateWithoutHistoryInput>
+  where?: Prisma.PelangganWhereInput
+}
+
+export type PelangganUpdateToOneWithWhereWithoutHistoryInput = {
+  where?: Prisma.PelangganWhereInput
+  data: Prisma.XOR<Prisma.PelangganUpdateWithoutHistoryInput, Prisma.PelangganUncheckedUpdateWithoutHistoryInput>
+}
+
+export type PelangganUpdateWithoutHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  namaPelanggan?: Prisma.StringFieldUpdateOperationsInput | string
+  alamat?: Prisma.StringFieldUpdateOperationsInput | string
+  noPdam?: Prisma.StringFieldUpdateOperationsInput | string
+  keluhan?: Prisma.StringFieldUpdateOperationsInput | string
+  noTelp?: Prisma.StringFieldUpdateOperationsInput | string
+  statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finished?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type PelangganUncheckedUpdateWithoutHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  namaPelanggan?: Prisma.StringFieldUpdateOperationsInput | string
+  alamat?: Prisma.StringFieldUpdateOperationsInput | string
+  noPdam?: Prisma.StringFieldUpdateOperationsInput | string
+  keluhan?: Prisma.StringFieldUpdateOperationsInput | string
+  noTelp?: Prisma.StringFieldUpdateOperationsInput | string
+  statusPelanggan?: Prisma.EnumStatusPelangganFieldUpdateOperationsInput | $Enums.StatusPelanggan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  finished?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 
 
 export type PelangganSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -424,6 +544,8 @@ export type PelangganSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   statusPelanggan?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  finished?: boolean
+  history?: boolean | Prisma.Pelanggan$historyArgs<ExtArgs>
 }, ExtArgs["result"]["pelanggan"]>
 
 
@@ -438,13 +560,19 @@ export type PelangganSelectScalar = {
   statusPelanggan?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  finished?: boolean
 }
 
-export type PelangganOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "namaPelanggan" | "alamat" | "noPdam" | "keluhan" | "noTelp" | "statusPelanggan" | "createdAt" | "updatedAt", ExtArgs["result"]["pelanggan"]>
+export type PelangganOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "namaPelanggan" | "alamat" | "noPdam" | "keluhan" | "noTelp" | "statusPelanggan" | "createdAt" | "updatedAt" | "finished", ExtArgs["result"]["pelanggan"]>
+export type PelangganInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  history?: boolean | Prisma.Pelanggan$historyArgs<ExtArgs>
+}
 
 export type $PelangganPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Pelanggan"
-  objects: {}
+  objects: {
+    history: Prisma.$HistoryPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     namaPelanggan: string
@@ -455,6 +583,7 @@ export type $PelangganPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     statusPelanggan: $Enums.StatusPelanggan
     createdAt: Date
     updatedAt: Date
+    finished: Date | null
   }, ExtArgs["result"]["pelanggan"]>
   composites: {}
 }
@@ -795,6 +924,7 @@ readonly fields: PelangganFieldRefs;
  */
 export interface Prisma__PelangganClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  history<T extends Prisma.Pelanggan$historyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Pelanggan$historyArgs<ExtArgs>>): Prisma.Prisma__HistoryClient<runtime.Types.Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -833,6 +963,7 @@ export interface PelangganFieldRefs {
   readonly statusPelanggan: Prisma.FieldRef<"Pelanggan", 'StatusPelanggan'>
   readonly createdAt: Prisma.FieldRef<"Pelanggan", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Pelanggan", 'DateTime'>
+  readonly finished: Prisma.FieldRef<"Pelanggan", 'DateTime'>
 }
     
 
@@ -849,6 +980,10 @@ export type PelangganFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the Pelanggan
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
   /**
    * Filter, which Pelanggan to fetch.
    */
@@ -868,6 +1003,10 @@ export type PelangganFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensi
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
+  /**
    * Filter, which Pelanggan to fetch.
    */
   where: Prisma.PelangganWhereUniqueInput
@@ -885,6 +1024,10 @@ export type PelangganFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the Pelanggan
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
   /**
    * Filter, which Pelanggan to fetch.
    */
@@ -934,6 +1077,10 @@ export type PelangganFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensio
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
+  /**
    * Filter, which Pelanggan to fetch.
    */
   where?: Prisma.PelangganWhereInput
@@ -981,6 +1128,10 @@ export type PelangganFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the Pelanggan
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
   /**
    * Filter, which Pelanggans to fetch.
    */
@@ -1030,6 +1181,10 @@ export type PelangganCreateArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
+  /**
    * The data needed to create a Pelanggan.
    */
   data: Prisma.XOR<Prisma.PelangganCreateInput, Prisma.PelangganUncheckedCreateInput>
@@ -1058,6 +1213,10 @@ export type PelangganUpdateArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the Pelanggan
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
   /**
    * The data needed to update a Pelanggan.
    */
@@ -1099,6 +1258,10 @@ export type PelangganUpsertArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
+  /**
    * The filter to search for the Pelanggan to update in case it exists.
    */
   where: Prisma.PelangganWhereUniqueInput
@@ -1125,6 +1288,10 @@ export type PelangganDeleteArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
+  /**
    * Filter which Pelanggan to delete.
    */
   where: Prisma.PelangganWhereUniqueInput
@@ -1145,6 +1312,25 @@ export type PelangganDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
+ * Pelanggan.history
+ */
+export type Pelanggan$historyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the History
+   */
+  select?: Prisma.HistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the History
+   */
+  omit?: Prisma.HistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HistoryInclude<ExtArgs> | null
+  where?: Prisma.HistoryWhereInput
+}
+
+/**
  * Pelanggan without action
  */
 export type PelangganDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1156,4 +1342,8 @@ export type PelangganDefaultArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Omit specific fields from the Pelanggan
    */
   omit?: Prisma.PelangganOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PelangganInclude<ExtArgs> | null
 }

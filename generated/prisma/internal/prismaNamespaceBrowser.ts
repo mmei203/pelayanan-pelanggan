@@ -51,7 +51,9 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Pelanggan: 'Pelanggan'
+  Pelanggan: 'Pelanggan',
+  User: 'User',
+  History: 'History'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -79,10 +81,35 @@ export const PelangganScalarFieldEnum = {
   noTelp: 'noTelp',
   statusPelanggan: 'statusPelanggan',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  finished: 'finished'
 } as const
 
 export type PelangganScalarFieldEnum = (typeof PelangganScalarFieldEnum)[keyof typeof PelangganScalarFieldEnum]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  email: 'email',
+  password: 'password',
+  roleUser: 'roleUser'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const HistoryScalarFieldEnum = {
+  id: 'id',
+  pelangganId: 'pelangganId',
+  namaPelanggan: 'namaPelanggan',
+  keluhan: 'keluhan',
+  tanggalLaporan: 'tanggalLaporan',
+  tanggalSelesai: 'tanggalSelesai',
+  createdAt: 'createdAt'
+} as const
+
+export type HistoryScalarFieldEnum = (typeof HistoryScalarFieldEnum)[keyof typeof HistoryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -91,6 +118,14 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 export const PelangganOrderByRelevanceFieldEnum = {
@@ -103,4 +138,24 @@ export const PelangganOrderByRelevanceFieldEnum = {
 } as const
 
 export type PelangganOrderByRelevanceFieldEnum = (typeof PelangganOrderByRelevanceFieldEnum)[keyof typeof PelangganOrderByRelevanceFieldEnum]
+
+
+export const UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  username: 'username',
+  email: 'email',
+  password: 'password'
+} as const
+
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const HistoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  pelangganId: 'pelangganId',
+  namaPelanggan: 'namaPelanggan',
+  keluhan: 'keluhan'
+} as const
+
+export type HistoryOrderByRelevanceFieldEnum = (typeof HistoryOrderByRelevanceFieldEnum)[keyof typeof HistoryOrderByRelevanceFieldEnum]
 

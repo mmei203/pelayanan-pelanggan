@@ -1,3 +1,4 @@
+import { StatusPelanggan } from '../../generated/prisma/enums.js';
 import {prisma} from '../config/db.js';
 
 // GET ALL PELANGGAN
@@ -88,7 +89,7 @@ export const updatePelanggan = async (req, res, next) => {
          data: {
             pelanggan
          }
-      })
+      });
    } catch (error) {
       next(error);
    }
@@ -115,8 +116,50 @@ export const pelangganByStatus = async (req, res, next) => {
          data: {
             pelanggan
          }
-      })
+      });
    } catch (error) {
-      next(error)
+      next(error);
    }
+}
+
+// CONTROLLER UPDATE STATUS PELANGGAN
+export const updateStatusPelanggan = async (pelangganId, statusBaru) => {
+   return await prisma.$transaction(async (tx) => {
+      const pelanggan = await tx.pelanggan.findUnique({
+         where: {id: pelangganId}
+      });
+
+      if (!pelanggan) {
+         throw new Error('Data pelanggan tidak ditemukan');
+      }
+
+      const selesai = statusBaru === StatusPelanggan.SELESAI ? new Date() : null;
+
+      if (statusBaru === 'SELESAI') {
+         await tx.history.upsert({
+            where: {pelangganId: pelanggan.id},
+            create: {
+               pelangganId: pelanggan.id,
+               namaPelanggan: pelanggan.namaPelanggan,
+               keluhan: pelanggan.keluhan,
+               tanggalLaporan: pelanggan.createdAt,
+               tanggalSelesai: selesai || new Date(),
+            },
+            update: {
+               tanggalSelesai: selesai || new Date()
+            }
+         });
+      }
+
+      return await tx.pelanggan.update({
+         where: {id: pelangganId},
+         data: {
+            statusPelanggan: statusBaru,
+            finished: selesai
+         },
+         include: {
+            history: true
+         }
+      })
+   });
 }

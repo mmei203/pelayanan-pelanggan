@@ -4,7 +4,8 @@ import {
    getPelanggan, 
    pelangganByStatus, 
    postPelanggan, 
-   updatePelanggan 
+   updatePelanggan, 
+   updateStatusPelanggan
 } from '../controllers/pelanggan.controller.js';
 
 const pelangganRoute =  Router();
@@ -23,5 +24,8 @@ pelangganRoute.post('/tambah-pelanggan', postPelanggan);
 
 // EDIT PELANGGAN
 pelangganRoute.put('/:id', updatePelanggan);
+
+// UPDATE STATUS
+pelangganRoute.patch('/:id/status', updateStatusPelanggan)
 
 export default pelangganRoute;
