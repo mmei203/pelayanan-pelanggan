@@ -1,202 +1,131 @@
 {
-  "meta": {
-    "format": "httpie",
-    "version": "1.0.0",
-    "contentType": "collection",
-    "schema": "https://schema.httpie.io/1.0.0.json",
-    "docs": "https://httpie.io/r/help/export-from-httpie",
-    "source": "HTTPie Desktop 2025.2.0"
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Web Perumda",
+    "description": "Dokumentasi API Pelayanan Pelanggan dan History",
+    "version": "1.0.0"
   },
-  "entry": {
-    "name": "web perumda",
-    "icon": {
-      "name": "globe",
-      "color": "gray"
-    },
-    "auth": {
-      "type": "none"
-    },
-    "requests": [
-      {
-        "name": "get all pelanggan",
-        "url": "{{base_url}}/pelanggan",
-        "method": "GET",
-        "headers": [],
-        "queryParams": [],
-        "pathParams": [],
-        "auth": {
-          "type": "inherited"
-        },
-        "body": {
-          "type": "form",
-          "file": {
-            "name": ""
-          },
-          "text": {
-            "value": "",
-            "format": "application/json"
-          },
-          "form": {
-            "isMultipart": false,
-            "fields": []
-          },
-          "graphql": {
-            "query": "",
-            "variables": ""
-          }
-        }
-      },
-      {
-        "name": "get detail pelanggan",
-        "url": "{{base_url}}/pelanggan/711208b6-1955-425f-8632-e6850b7fac0d",
-        "method": "GET",
-        "headers": [],
-        "queryParams": [],
-        "pathParams": [],
-        "auth": {
-          "type": "inherited"
-        },
-        "body": {
-          "type": "none",
-          "file": {
-            "name": ""
-          },
-          "text": {
-            "value": "",
-            "format": "application/json"
-          },
-          "form": {
-            "isMultipart": false,
-            "fields": []
-          },
-          "graphql": {
-            "query": "",
-            "variables": ""
-          }
-        }
-      },
-      {
-        "name": "tambah pelanggan",
-        "url": "{{base_url}}/pelanggan/tambah-pelanggan",
-        "method": "POST",
-        "headers": [],
-        "queryParams": [],
-        "pathParams": [],
-        "auth": {
-          "type": "inherited"
-        },
-        "body": {
-          "type": "text",
-          "file": {
-            "name": ""
-          },
-          "text": {
-            "value": "{\n  \"namaPelanggan\" : \"pelanggan 5\",\n  \"alamat\": \"Jl. Cendana II\",\n  \"noPdam\": 1231232,\n  \"keluhan\": \"sedot air limmbah\",\n  \"noTelp\": 43234234\n}",
-            "format": "application/json"
-          },
-          "form": {
-            "isMultipart": false,
-            "fields": []
-          },
-          "graphql": {
-            "query": "",
-            "variables": ""
-          }
-        }
-      },
-      {
-        "name": "edit pelanggan",
-        "url": "{{base_url}}/pelanggan/582074bc-48be-4a4b-8d8f-e735a69a1a2f",
-        "method": "PUT",
-        "headers": [],
-        "queryParams": [],
-        "pathParams": [],
-        "auth": {
-          "type": "inherited"
-        },
-        "body": {
-          "type": "text",
-          "file": {
-            "name": ""
-          },
-          "text": {
-            "value": "{\n  \"statusPelanggan\": \"SELESAI\"\n}",
-            "format": "application/json"
-          },
-          "form": {
-            "isMultipart": false,
-            "fields": []
-          },
-          "graphql": {
-            "query": "",
-            "variables": ""
-          }
-        }
-      },
-      {
-        "name": "get pelanggan by status",
-        "url": "{{base_url}}/pelanggan/",
-        "method": "GET",
-        "headers": [],
-        "queryParams": [
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/pelanggan": {
+      "get": {
+        "summary": "Get all pelanggan / Get pelanggan by status",
+        "parameters": [
           {
-            "name": "\"statusPelanggan\"",
-            "value": "\"PENDING\"",
-            "enabled": true
+            "name": "statusPelanggan",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "PENDING"
+            },
+            "description": "Filter pelanggan berdasarkan status"
           }
         ],
-        "pathParams": [],
-        "auth": {
-          "type": "inherited"
-        },
-        "body": {
-          "type": "form",
-          "file": {
-            "name": ""
-          },
-          "text": {
-            "value": "",
-            "format": "application/json"
-          },
-          "form": {
-            "isMultipart": false,
-            "fields": []
-          },
-          "graphql": {
-            "query": "",
-            "variables": ""
-          }
-        }
-      },
-      {
-        "name": "get history",
-        "url": "{{base_url}}/history/",
-        "method": "GET",
-        "headers": [],
-        "queryParams": [],
-        "pathParams": [],
-        "auth": {
-          "type": "inherited"
-        },
-        "body": {
-          "type": "none",
-          "file": {
-            "name": ""
-          },
-          "text": {
-            "value": "",
-            "format": "application/json"
-          },
-          "form": {
-            "isMultipart": false,
-            "fields": []
-          },
-          "graphql": {
-            "query": "",
-            "variables": ""
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan data pelanggan"
           }
         }
       }
-    ]
+    },
+    "/pelanggan/{id}": {
+      "get": {
+        "summary": "Get detail pelanggan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "711208b6-1955-425f-8632-e6850b7fac0d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan detail pelanggan"
+          }
+        }
+      },
+      "put": {
+        "summary": "Edit pelanggan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "582074bc-48be-4a4b-8d8f-e735a69a1a2f"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusPelanggan": {
+                    "type": "string",
+                    "example": "SELESAI"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil memperbarui data pelanggan"
+          }
+        }
+      }
+    },
+    "/pelanggan/tambah-pelanggan": {
+      "post": {
+        "summary": "Tambah pelanggan",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "namaPelanggan": { "type": "string", "example": "pelanggan 5" },
+                  "alamat": { "type": "string", "example": "Jl. Cendana II" },
+                  "noPdam": { "type": "integer", "example": 1231232 },
+                  "keluhan": { "type": "string", "example": "sedot air limbah" },
+                  "noTelp": { "type": "integer", "example": 43234234 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pelanggan berhasil ditambahkan"
+          }
+        }
+      }
+    },
+    "/history/": {
+      "get": {
+        "summary": "Get history",
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan data riwayat"
+          }
+        }
+      }
+    }
   }
 }
