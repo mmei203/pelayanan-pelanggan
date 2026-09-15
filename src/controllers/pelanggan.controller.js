@@ -1,4 +1,4 @@
-import { StatusPelanggan } from '../../generated/prisma/enums.js';
+import { StatusPelanggan } from '../../generated/prisma/enums.ts';
 import {prisma} from '../config/db.js';
 
 // GET ALL PELANGGAN

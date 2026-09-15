@@ -2,97 +2,42 @@
   "openapi": "3.0.3",
   "info": {
     "title": "API Web Perumda",
-    "description": "Dokumentasi API Pelayanan Pelanggan dan History",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Dokumentasi API untuk manajemen data dan layanan pelanggan Web Perumda."
   },
   "servers": [
     {
       "url": "http://localhost:3000",
-      "description": "Local server"
+      "description": "Local Development Server"
     }
   ],
   "paths": {
     "/pelanggan": {
       "get": {
         "summary": "Get all pelanggan / Get pelanggan by status",
+        "description": "Mengambil semua data pelanggan atau memfilter berdasarkan status.",
         "parameters": [
           {
             "name": "statusPelanggan",
             "in": "query",
             "required": false,
+            "description": "Filter berdasarkan status (contoh: PENDING, SELESAI)",
             "schema": {
               "type": "string",
               "example": "PENDING"
-            },
-            "description": "Filter pelanggan berdasarkan status"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Berhasil mendapatkan data pelanggan"
-          }
-        }
-      }
-    },
-    "/pelanggan/{id}": {
-      "get": {
-        "summary": "Get detail pelanggan",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "711208b6-1955-425f-8632-e6850b7fac0d"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Berhasil mendapatkan detail pelanggan"
-          }
-        }
-      },
-      "put": {
-        "summary": "Edit pelanggan",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "582074bc-48be-4a4b-8d8f-e735a69a1a2f"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "statusPelanggan": {
-                    "type": "string",
-                    "example": "SELESAI"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Berhasil memperbarui data pelanggan"
+            "description": "Berhasil mengambil data pelanggan"
           }
         }
       }
     },
     "/pelanggan/tambah-pelanggan": {
       "post": {
-        "summary": "Tambah pelanggan",
+        "summary": "Tambah pelanggan baru",
         "requestBody": {
           "required": true,
           "content": {
@@ -117,12 +62,61 @@
         }
       }
     },
+    "/pelanggan/{id}": {
+      "get": {
+        "summary": "Get detail pelanggan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "711208b6-1955-425f-8632-e6850b7fac0d"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil mengambil detail pelanggan"
+          }
+        }
+      },
+      "put": {
+        "summary": "Edit pelanggan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "582074bc-48be-4a4b-8d8f-e735a69a1a2f"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusPelanggan": { "type": "string", "example": "SELESAI" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Data pelanggan berhasil diperbarui"
+          }
+        }
+      }
+    },
     "/history/": {
       "get": {
         "summary": "Get history",
         "responses": {
           "200": {
-            "description": "Berhasil mendapatkan data riwayat"
+            "description": "Berhasil mengambil data riwayat"
           }
         }
       }
