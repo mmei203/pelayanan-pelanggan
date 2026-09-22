@@ -18,17 +18,17 @@ export { Prisma }
 export * as $Enums from './enums.ts'
 export * from './enums.ts';
 /**
- * Model Pelanggan
+ * Model TabelPelanggan
  * 
  */
-export type Pelanggan = Prisma.PelangganModel
+export type TabelPelanggan = Prisma.TabelPelangganModel
 /**
- * Model User
+ * Model TabelUser
  * 
  */
-export type User = Prisma.UserModel
+export type TabelUser = Prisma.TabelUserModel
 /**
- * Model History
+ * Model TabelPengaduan
  * 
  */
-export type History = Prisma.HistoryModel
+export type TabelPengaduan = Prisma.TabelPengaduanModel

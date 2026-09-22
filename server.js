@@ -1,35 +1,37 @@
 import express from "express";
-import 'dotenv/config'; // import variabel dari .env
-import cors from 'cors';
-import morgan from 'morgan';
-import helmet from 'helmet';
-import {rateLimit} from 'express-rate-limit';
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+import { config } from "./src/config/env.js";
+import pelangganRoutes from "./src/routes/pelanggan.routes.js";
+import userRoutes from "./src/routes/user.routes.js";
+import { errorHandler } from "./src/middlewares/error.middleware.js";
 
-const server = express();
-const PORT = process.env.PORT;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// MIDDLEWARES
-server.use(express.json());
-server.use(express.urlencoded({ extended: true }));
-// server.use(errorMiddleware);
-server.use(cors());
-server.use(morgan('dev'));
-server.use(helmet());
+const app = express();
 
-const limiter = rateLimit({
-   windowMs: 5 * 60 * 1000, //timeout sampe kapan
-   limit: 20,
-   message: "TOO MANY REQUEST"
-})
-server.use(limiter);
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Folder Static untuk Akses File Upload (Dokumen / Foto)
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// ROUTES
+// Routes
+app.use("/api", pelangganRoutes);
+app.use("/api", userRoutes);
 
-server.get('/', (req, res) => {
-   res.json({message: 'API PELAYANAN PERUMDA'});
+// Root Route
+app.get("/", (req, res) => {
+	res.json({ message: "API PERUMDA PALD Running Successfully" });
 });
 
-server.listen(PORT, () => {
-   console.log(`server is running in http://localhost:${PORT}`);
-})
+// Global Error Handler
+app.use(errorHandler);
+
+app.listen(config.port, () => {
+	console.log(`Server is running on port ${config.port}`);
+});

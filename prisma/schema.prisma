@@ -1,8 +1,65 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
+}
+
+enum Role {
+  CS
+  Operator
+  Pengawas
+}
+
+model TabelPelanggan {
+  idPelanggan   String   @id @default(uuid()) @map("ID_PELANGGAN") @db.VarChar(36)
+  noKontakPdam  String?  @map("NO_KONTAK_PDAM") @db.VarChar(50)
+  namaPelanggan String   @map("NAMA_PELANGGAN") @db.VarChar(255)
+  noHp          String   @map("NO_HP") @db.VarChar(20)
+  alamat        String?  @map("ALAMAT") @db.Text
+  createdAt     DateTime @default(now()) @map("CREATED_AT") @db.Timestamp(0)
+
+  pengaduan TabelPengaduan[]
+
+  @@map("TABEL_PELANGGAN")
+}
+
+model TabelUser {
+  idUser    String   @id @default(uuid()) @map("ID_USER") @db.VarChar(36)
+  namaUser  String   @map("NAMA_USER") @db.VarChar(100)
+  email     String   @unique @map("EMAIL") @db.VarChar(255)
+  username  String   @unique @map("USERNAME") @db.VarChar(255)
+  password  String   @map("PASSWORD") @db.VarChar(255)
+  role      Role     @map("ROLE")
+  createdAt DateTime @default(now()) @map("CREATED_AT") @db.Timestamp(0)
+
+  pengaduanDiterima TabelPengaduan[] @relation("Menerima")
+  pengaduanDitangani TabelPengaduan[] @relation("Menangani")
+
+  @@map("TABEL_USER")
+}
+
+model TabelPengaduan {
+  idPengaduan    String    @id @default(uuid()) @map("ID_PENGADUAN") @db.VarChar(36)
+  idPelanggan    String    @map("ID_PELANGGAN") @db.VarChar(36)
+  idUser         String    @map("ID_USER") @db.VarChar(36)
+  tabIdUser      String?   @map("TAB_ID_USER") @db.VarChar(36)
+  keluhan        String    @map("KELUHAN") @db.Text
+  status         String    @map("STATUS") @db.VarChar(20)
+  latitude       String?   @map("LATITUDE") @db.VarChar(50)
+  longitude      String?   @map("LONGITUDE") @db.VarChar(50)
+  dokumenLaporan String?   @map("DOKUMEN_LAPORAN") @db.VarChar(500)
+  fotoKeluhan    String?   @map("FOTO_KELUHAN") @db.VarChar(255)
+  tanggalDiterima DateTime  @default(now()) @map("TANGGAL_DITERIMA") @db.DateTime(0)
+  tanggalDiproses DateTime? @map("TANGGAL_DIPROSES") @db.DateTime(0)
+  tanggalSelesai  DateTime? @map("TANGGAL_SELESAI") @db.DateTime(0)
+  createdAt      DateTime  @default(now()) @map("CREATED_AT") @db.Timestamp(0)
+  updatedAt      DateTime? @updatedAt @map("UPDATED_AT") @db.Timestamp(0)
+
+  pelanggan TabelPelanggan @relation(fields: [idPelanggan], references: [idPelanggan])
+  penerima  TabelUser      @relation("Menerima", fields: [idUser], references: [idUser])
+  penangani TabelUser?     @relation("Menangani", fields: [tabIdUser], references: [idUser])
+
+  @@map("TABEL_PENGADUAN")
 }

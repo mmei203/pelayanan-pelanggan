@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Pelanggan.ts'
-export type * from './models/User.ts'
-export type * from './models/History.ts'
+export type * from './models/TabelPelanggan.ts'
+export type * from './models/TabelUser.ts'
+export type * from './models/TabelPengaduan.ts'
 export type * from './commonInputTypes.ts'

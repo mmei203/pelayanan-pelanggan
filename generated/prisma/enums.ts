@@ -9,19 +9,10 @@
 * 🟢 You can import this file directly.
 */
 
-export const StatusPelanggan = {
-  PENDING: 'PENDING',
-  ON_PROGRESS: 'ON_PROGRESS',
-  SELESAI: 'SELESAI'
+export const Role = {
+  CS: 'CS',
+  Operator: 'Operator',
+  Pengawas: 'Pengawas'
 } as const
 
-export type StatusPelanggan = (typeof StatusPelanggan)[keyof typeof StatusPelanggan]
-
-
-export const roleUser = {
-  CUSTOMER_SERVICE: 'CUSTOMER_SERVICE',
-  OPERATOR: 'OPERATOR',
-  PENGAWAS: 'PENGAWAS'
-} as const
-
-export type roleUser = (typeof roleUser)[keyof typeof roleUser]
+export type Role = (typeof Role)[keyof typeof Role]

@@ -51,9 +51,9 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Pelanggan: 'Pelanggan',
-  User: 'User',
-  History: 'History'
+  TabelPelanggan: 'TabelPelanggan',
+  TabelUser: 'TabelUser',
+  TabelPengaduan: 'TabelPengaduan'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -72,44 +72,50 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const PelangganScalarFieldEnum = {
-  id: 'id',
+export const TabelPelangganScalarFieldEnum = {
+  idPelanggan: 'idPelanggan',
+  noKontakPdam: 'noKontakPdam',
   namaPelanggan: 'namaPelanggan',
+  noHp: 'noHp',
   alamat: 'alamat',
-  noPdam: 'noPdam',
-  keluhan: 'keluhan',
-  noTelp: 'noTelp',
-  statusPelanggan: 'statusPelanggan',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  finished: 'finished'
-} as const
-
-export type PelangganScalarFieldEnum = (typeof PelangganScalarFieldEnum)[keyof typeof PelangganScalarFieldEnum]
-
-
-export const UserScalarFieldEnum = {
-  id: 'id',
-  username: 'username',
-  email: 'email',
-  password: 'password',
-  roleUser: 'roleUser'
-} as const
-
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
-
-
-export const HistoryScalarFieldEnum = {
-  id: 'id',
-  pelangganId: 'pelangganId',
-  namaPelanggan: 'namaPelanggan',
-  keluhan: 'keluhan',
-  tanggalLaporan: 'tanggalLaporan',
-  tanggalSelesai: 'tanggalSelesai',
   createdAt: 'createdAt'
 } as const
 
-export type HistoryScalarFieldEnum = (typeof HistoryScalarFieldEnum)[keyof typeof HistoryScalarFieldEnum]
+export type TabelPelangganScalarFieldEnum = (typeof TabelPelangganScalarFieldEnum)[keyof typeof TabelPelangganScalarFieldEnum]
+
+
+export const TabelUserScalarFieldEnum = {
+  idUser: 'idUser',
+  namaUser: 'namaUser',
+  email: 'email',
+  username: 'username',
+  password: 'password',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type TabelUserScalarFieldEnum = (typeof TabelUserScalarFieldEnum)[keyof typeof TabelUserScalarFieldEnum]
+
+
+export const TabelPengaduanScalarFieldEnum = {
+  idPengaduan: 'idPengaduan',
+  idPelanggan: 'idPelanggan',
+  idUser: 'idUser',
+  tabIdUser: 'tabIdUser',
+  keluhan: 'keluhan',
+  status: 'status',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  dokumenLaporan: 'dokumenLaporan',
+  fotoKeluhan: 'fotoKeluhan',
+  tanggalDiterima: 'tanggalDiterima',
+  tanggalDiproses: 'tanggalDiproses',
+  tanggalSelesai: 'tanggalSelesai',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TabelPengaduanScalarFieldEnum = (typeof TabelPengaduanScalarFieldEnum)[keyof typeof TabelPengaduanScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -128,34 +134,40 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
-export const PelangganOrderByRelevanceFieldEnum = {
-  id: 'id',
+export const TabelPelangganOrderByRelevanceFieldEnum = {
+  idPelanggan: 'idPelanggan',
+  noKontakPdam: 'noKontakPdam',
   namaPelanggan: 'namaPelanggan',
-  alamat: 'alamat',
-  noPdam: 'noPdam',
-  keluhan: 'keluhan',
-  noTelp: 'noTelp'
+  noHp: 'noHp',
+  alamat: 'alamat'
 } as const
 
-export type PelangganOrderByRelevanceFieldEnum = (typeof PelangganOrderByRelevanceFieldEnum)[keyof typeof PelangganOrderByRelevanceFieldEnum]
+export type TabelPelangganOrderByRelevanceFieldEnum = (typeof TabelPelangganOrderByRelevanceFieldEnum)[keyof typeof TabelPelangganOrderByRelevanceFieldEnum]
 
 
-export const UserOrderByRelevanceFieldEnum = {
-  id: 'id',
-  username: 'username',
+export const TabelUserOrderByRelevanceFieldEnum = {
+  idUser: 'idUser',
+  namaUser: 'namaUser',
   email: 'email',
+  username: 'username',
   password: 'password'
 } as const
 
-export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+export type TabelUserOrderByRelevanceFieldEnum = (typeof TabelUserOrderByRelevanceFieldEnum)[keyof typeof TabelUserOrderByRelevanceFieldEnum]
 
 
-export const HistoryOrderByRelevanceFieldEnum = {
-  id: 'id',
-  pelangganId: 'pelangganId',
-  namaPelanggan: 'namaPelanggan',
-  keluhan: 'keluhan'
+export const TabelPengaduanOrderByRelevanceFieldEnum = {
+  idPengaduan: 'idPengaduan',
+  idPelanggan: 'idPelanggan',
+  idUser: 'idUser',
+  tabIdUser: 'tabIdUser',
+  keluhan: 'keluhan',
+  status: 'status',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  dokumenLaporan: 'dokumenLaporan',
+  fotoKeluhan: 'fotoKeluhan'
 } as const
 
-export type HistoryOrderByRelevanceFieldEnum = (typeof HistoryOrderByRelevanceFieldEnum)[keyof typeof HistoryOrderByRelevanceFieldEnum]
+export type TabelPengaduanOrderByRelevanceFieldEnum = (typeof TabelPengaduanOrderByRelevanceFieldEnum)[keyof typeof TabelPengaduanOrderByRelevanceFieldEnum]
 
