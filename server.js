@@ -1,9 +1,5 @@
 import express from "express";
 import 'dotenv/config'; // import variabel dari .env
-import pelangganRoute from "./src/routes/pelanggan.routes.js";
-import historyRoute from "./src/routes/history.routes.js";
-import authRoute from './src/routes/auth.routes.js';
-import errorMiddleware from "./src/middlewares/error.middleware.js";
 import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
@@ -29,9 +25,6 @@ server.use(limiter);
 
 
 // ROUTES
-server.use('/pelanggan', pelangganRoute);
-server.use('/history', historyRoute);
-server.use('/auth', authRoute);
 
 server.get('/', (req, res) => {
    res.json({message: 'API PELAYANAN PERUMDA'});
