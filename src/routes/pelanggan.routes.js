@@ -1,13 +1,13 @@
 import { Router } from "express";
 import {
 	getAllPelanggan,
-	getPelangganById,
 	getPelangganByStatus,
+	getPelangganById,
 	createPelanggan,
 	updatePelanggan,
 	getHistory,
 } from "../controllers/pelanggan.controllers.js";
-import { upload } from "../middlewares/upload.middleware.js";
+import { uploadMiddleware } from "../middlewares/upload.middleware.js";
 
 const router = Router();
 
@@ -19,7 +19,7 @@ router.post("/pelanggan", createPelanggan);
 
 router.put(
 	"/pelanggan/:id",
-	upload.fields([
+	uploadMiddleware.fields([
 		{ name: "dokumenLaporan", maxCount: 1 },
 		{ name: "fotoKeluhan", maxCount: 1 },
 	]),

@@ -1,6 +1,6 @@
 import { prisma } from "../config/db.js";
+import { formatFileUrl } from "../utils/url.helper.js";
 
-// GET All Pelanggan & Filter by Search Keyword
 export const getAllPelanggan = async (req, res, next) => {
 	try {
 		const { search } = req.query;
@@ -17,23 +17,24 @@ export const getAllPelanggan = async (req, res, next) => {
 			where: whereCondition,
 			include: {
 				pelanggan: true,
-				penangani: {
-					select: { namaUser: true },
-				},
+				penerima: { select: { namaUser: true, role: true } },
+				penangani: { select: { namaUser: true, role: true } },
 			},
 			orderBy: { createdAt: "desc" },
 		});
 
-		res.status(200).json({
-			success: true,
-			data: pengaduanList,
-		});
+		const formattedData = pengaduanList.map((item) => ({
+			...item,
+			dokumenLaporan: formatFileUrl(req, item.dokumenLaporan),
+			fotoKeluhan: formatFileUrl(req, item.fotoKeluhan),
+		}));
+
+		res.status(200).json({ success: true, data: formattedData });
 	} catch (error) {
 		next(error);
 	}
 };
 
-// GET Pelanggan By Status
 export const getPelangganByStatus = async (req, res, next) => {
 	try {
 		const { status } = req.query;
@@ -47,16 +48,18 @@ export const getPelangganByStatus = async (req, res, next) => {
 			orderBy: { createdAt: "desc" },
 		});
 
-		res.status(200).json({
-			success: true,
-			data: pengaduanList,
-		});
+		const formattedData = pengaduanList.map((item) => ({
+			...item,
+			dokumenLaporan: formatFileUrl(req, item.dokumenLaporan),
+			fotoKeluhan: formatFileUrl(req, item.fotoKeluhan),
+		}));
+
+		res.status(200).json({ success: true, data: formattedData });
 	} catch (error) {
 		next(error);
 	}
 };
 
-// GET Pelanggan By ID
 export const getPelangganById = async (req, res, next) => {
 	try {
 		const { id } = req.params;
@@ -76,41 +79,38 @@ export const getPelangganById = async (req, res, next) => {
 				.json({ success: false, message: "Data pengaduan tidak ditemukan" });
 		}
 
-		res.status(200).json({ success: true, data: pengaduan });
+		const formattedData = {
+			...pengaduan,
+			dokumenLaporan: formatFileUrl(req, pengaduan.dokumenLaporan),
+			fotoKeluhan: formatFileUrl(req, pengaduan.fotoKeluhan),
+		};
+
+		res.status(200).json({ success: true, data: formattedData });
 	} catch (error) {
 		next(error);
 	}
 };
 
-// POST Pelanggan & Pengaduan (Diinput CS)
 export const createPelanggan = async (req, res, next) => {
 	try {
 		const { namaPelanggan, noHp, noKontakPdam, alamat, keluhan, idUserCS } =
 			req.body;
 
 		if (!idUserCS) {
-			return res.status(400).json({
-				success: false,
-				message: "idUserCS wajib diisi",
-			});
+			return res
+				.status(400)
+				.json({ success: false, message: "idUserCS wajib diisi" });
 		}
 
 		const result = await prisma.$transaction(async (tx) => {
-			// 1. Buat data pelanggan
 			const pelangganBaru = await tx.tabelPelanggan.create({
-				data: {
-					namaPelanggan,
-					noHp,
-					noKontakPdam,
-					alamat,
-				},
+				data: { namaPelanggan, noHp, noKontakPdam, alamat },
 			});
 
-			// 2. Buat data pengaduan
 			const pengaduanBaru = await tx.tabelPengaduan.create({
 				data: {
 					idPelanggan: pelangganBaru.idPelanggan,
-					idUser: idUserCS,
+					idUserPenerima: idUserCS,
 					keluhan,
 					status: "PENDING",
 					tanggalDiterima: new Date(),
@@ -130,12 +130,13 @@ export const createPelanggan = async (req, res, next) => {
 	}
 };
 
-// PUT Update Status Pelanggan (Terima / Selesai oleh Operator)
 export const updatePelanggan = async (req, res, next) => {
 	try {
 		const { id } = req.params;
+		const rawStatus = req.body.status
+			? req.body.status.replace(/"/g, "").trim()
+			: "";
 		const {
-			status,
 			operatorId,
 			latitude,
 			longitude,
@@ -143,63 +144,88 @@ export const updatePelanggan = async (req, res, next) => {
 			noHp,
 			noKontakPdam,
 			alamat,
-			keluhan,
 		} = req.body;
 
-		const updateData = {};
-
-		// 1. Operator Klik "Terima Keluhan" -> PENDING -> ON PROGRESS
-		if (status === "ON PROGRESS") {
-			updateData.status = "ON PROGRESS";
-			updateData.tabIdUser = operatorId;
-			updateData.tanggalDiproses = new Date();
-		}
-
-		// 2. Operator Klik "Simpan Perubahan" -> ON PROGRESS -> SELESAI
-		if (status === "SELESAI") {
-			updateData.status = "SELESAI";
-			updateData.latitude = latitude;
-			updateData.longitude = longitude;
-			updateData.tanggalSelesai = new Date();
-
-			if (req.files?.dokumenLaporan?.[0]) {
-				updateData.dokumenLaporan = req.files.dokumenLaporan[0].path;
-			}
-			if (req.files?.fotoKeluhan?.[0]) {
-				updateData.fotoKeluhan = req.files.fotoKeluhan[0].path;
-			}
-		}
-
-		const updatedPengaduan = await prisma.tabelPengaduan.update({
+		const pengaduanExist = await prisma.tabelPengaduan.findUnique({
 			where: { idPengaduan: id },
-			data: updateData,
-			include: { pelanggan: true },
 		});
 
-		// Update opsional data identitas pelanggan jika dikirimkan
-		if (namaPelanggan || noHp || noKontakPdam || alamat) {
-			await prisma.tabelPelanggan.update({
-				where: { idPelanggan: updatedPengaduan.idPelanggan },
+		if (!pengaduanExist) {
+			return res
+				.status(404)
+				.json({ success: false, message: "Data pengaduan tidak ditemukan" });
+		}
+
+		// 1. Status ON PROGRESS
+		if (rawStatus === "ON PROGRESS") {
+			const updated = await prisma.tabelPengaduan.update({
+				where: { idPengaduan: id },
 				data: {
-					...(namaPelanggan && { namaPelanggan }),
-					...(noHp && { noHp }),
-					...(noKontakPdam && { noKontakPdam }),
-					...(alamat && { alamat }),
+					status: "ON PROGRESS",
+					idUserPenanganan: operatorId,
+					tanggalDiproses: new Date(),
 				},
+				include: { pelanggan: true },
+			});
+
+			return res.status(200).json({
+				success: true,
+				message: "Status berhasil diperbarui menjadi ON PROGRESS",
+				data: updated,
 			});
 		}
 
-		res.status(200).json({
-			success: true,
-			message: "Data pengaduan berhasil diperbarui",
-			data: updatedPengaduan,
-		});
+		// 2. Status SELESAI
+		if (rawStatus === "SELESAI") {
+			const dokumenLaporanPath = req.files?.dokumenLaporan?.[0]?.path || null;
+			const fotoKeluhanPath = req.files?.fotoKeluhan?.[0]?.path || null;
+
+			const updated = await prisma.tabelPengaduan.update({
+				where: { idPengaduan: id },
+				data: {
+					status: "SELESAI",
+					latitude: latitude || null,
+					longitude: longitude || null,
+					dokumenLaporan: dokumenLaporanPath,
+					fotoKeluhan: fotoKeluhanPath,
+					tanggalSelesai: new Date(),
+				},
+				include: { pelanggan: true },
+			});
+
+			if (namaPelanggan || noHp || noKontakPdam || alamat) {
+				await prisma.tabelPelanggan.update({
+					where: { idPelanggan: updated.idPelanggan },
+					data: {
+						...(namaPelanggan && { namaPelanggan }),
+						...(noHp && { noHp }),
+						...(noKontakPdam && { noKontakPdam }),
+						...(alamat && { alamat }),
+					},
+				});
+			}
+
+			const formattedData = {
+				...updated,
+				dokumenLaporan: formatFileUrl(req, updated.dokumenLaporan),
+				fotoKeluhan: formatFileUrl(req, updated.fotoKeluhan),
+			};
+
+			return res.status(200).json({
+				success: true,
+				message: "Data pengaduan berhasil diperbarui",
+				data: formattedData,
+			});
+		}
+
+		return res
+			.status(400)
+			.json({ success: false, message: "Status tidak valid" });
 	} catch (error) {
 		next(error);
 	}
 };
 
-// GET History (Pengaduan Selesai)
 export const getHistory = async (req, res, next) => {
 	try {
 		const { search } = req.query;
@@ -213,25 +239,21 @@ export const getHistory = async (req, res, next) => {
 					},
 				}),
 			},
-			select: {
-				idPengaduan: true,
-				keluhan: true,
-				tanggalDiterima: true,
-				tanggalSelesai: true,
-				pelanggan: {
-					select: { namaPelanggan: true },
-				},
-				penangani: {
-					select: { namaUser: true },
-				},
+			include: {
+				pelanggan: true,
+				penerima: { select: { namaUser: true } },
+				penangani: { select: { namaUser: true } },
 			},
 			orderBy: { tanggalSelesai: "desc" },
 		});
 
-		res.status(200).json({
-			success: true,
-			data: history,
-		});
+		const formattedData = history.map((item) => ({
+			...item,
+			dokumenLaporan: formatFileUrl(req, item.dokumenLaporan),
+			fotoKeluhan: formatFileUrl(req, item.fotoKeluhan),
+		}));
+
+		res.status(200).json({ success: true, data: formattedData });
 	} catch (error) {
 		next(error);
 	}

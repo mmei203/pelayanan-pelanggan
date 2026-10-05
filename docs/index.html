@@ -1,249 +1,369 @@
 <!doctype html>
 <html lang="id">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Dokumentasi API PERUMDA PALD</title>
-		<link
-			rel="stylesheet"
-			href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
-		/>
-		<style>
-			body {
-				margin: 0;
-				padding: 0;
-				font-family: Arial, sans-serif;
-			}
-			#swagger-ui {
-				max-width: 1200px;
-				margin: 0 auto;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="swagger-ui"></div>
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Dokumentasi API PERUMDA PALD</title>
+      <link
+         rel="stylesheet"
+         href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
+      />
+      <style>
+         body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         }
+         #swagger-ui {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+         }
+         .swagger-ui .topbar {
+            display: none;
+         }
+      </style>
+   </head>
+   <body>
+      <div id="swagger-ui"></div>
 
-		<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
-		<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
-		<script>
-			window.onload = () => {
-				const spec = {
-					openapi: "3.0.0",
-					info: {
-						title: "PERUMDA PALD - API Dokumentasi Pelayanan Pelanggan",
-						version: "1.0.0",
-						description:
-							"Dokumentasi API interaktif untuk tim Frontend (Customer Service, Operator, dan Pengawas).",
-					},
-					servers: [
-						{
-							url: "http://localhost:5500/api",
-							description: "Local Development Server",
-						},
-					],
-					paths: {
-						"/users": {
-							get: {
-								summary:
-									"Mendapatkan daftar semua user (CS, Operator, Pengawas)",
-								tags: ["Users"],
-								responses: {
-									200: { description: "Berhasil mendapatkan daftar user" },
-								},
-							},
-							post: {
-								summary: "Membuat user baru",
-								tags: ["Users"],
-								requestBody: {
-									required: true,
-									content: {
-										"application/json": {
-											schema: {
-												type: "object",
-												properties: {
-													namaUser: {
-														type: "string",
-														example: "Operator Lapangan 2",
-													},
-													email: { type: "string", example: "op2@pald.co.id" },
-													username: { type: "string", example: "operator2" },
-													password: { type: "string", example: "password123" },
-													role: {
-														type: "string",
-														enum: ["CS", "Operator", "Pengawas"],
-														example: "Operator",
-													},
-												},
-											},
-										},
-									},
-								},
-								responses: {
-									201: { description: "User berhasil dibuat" },
-								},
-							},
-						},
-						"/pelanggan": {
-							get: {
-								summary: "Mendapatkan daftar semua pelanggan & pengaduan",
-								tags: ["Pelanggan & Pengaduan"],
-								parameters: [
-									{
-										name: "search",
-										in: "query",
-										description: "Cari berdasarkan nama pelanggan",
-										required: false,
-										schema: { type: "string" },
-									},
-								],
-								responses: {
-									200: { description: "Berhasil mendapatkan data" },
-								},
-							},
-							post: {
-								summary:
-									"Input pengaduan baru dari pelanggan (Diinput oleh CS)",
-								tags: ["Pelanggan & Pengaduan"],
-								requestBody: {
-									required: true,
-									content: {
-										"application/json": {
-											schema: {
-												type: "object",
-												properties: {
-													namaPelanggan: {
-														type: "string",
-														example: "Pelanggan 1",
-													},
-													noHp: { type: "string", example: "0877448710" },
-													noKontakPdam: {
-														type: "string",
-														example: "632831871383",
-													},
-													alamat: {
-														type: "string",
-														example: "Sungai Andai No.5 RT.3/RW.2",
-													},
-													keluhan: { type: "string", example: "Air Tersumbat" },
-													idUserCS: {
-														type: "string",
-														example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
-													},
-												},
-											},
-										},
-									},
-								},
-								responses: {
-									201: { description: "Pengaduan berhasil ditambahkan" },
-								},
-							},
-						},
-						"/pelanggan/filter": {
-							get: {
-								summary:
-									"Filter pengaduan berdasarkan status (PENDING, ON PROGRESS, SELESAI)",
-								tags: ["Pelanggan & Pengaduan"],
-								parameters: [
-									{
-										name: "status",
-										in: "query",
-										required: true,
-										schema: {
-											type: "string",
-											enum: ["PENDING", "ON PROGRESS", "SELESAI"],
-										},
-									},
-								],
-								responses: {
-									200: { description: "Berhasil mendapatkan data filter" },
-								},
-							},
-						},
-						"/pelanggan/history": {
-							get: {
-								summary:
-									"Mendapatkan seluruh history pengaduan dengan status SELESAI",
-								tags: ["Pelanggan & Pengaduan"],
-								responses: {
-									200: {
-										description: "Berhasil mendapatkan riwayat pengaduan",
-									},
-								},
-							},
-						},
-						"/pelanggan/{id}": {
-							get: {
-								summary:
-									"Mendapatkan detail pengaduan pelanggan berdasarkan ID",
-								tags: ["Pelanggan & Pengaduan"],
-								parameters: [
-									{
-										name: "id",
-										in: "path",
-										required: true,
-										schema: { type: "string" },
-									},
-								],
-								responses: {
-									200: { description: "Detail pengaduan ditemukan" },
-								},
-							},
-							put: {
-								summary:
-									"Update status pengaduan (Terima Keluhan atau Selesai Perbaikan)",
-								tags: ["Pelanggan & Pengaduan"],
-								parameters: [
-									{
-										name: "id",
-										in: "path",
-										required: true,
-										schema: { type: "string" },
-									},
-								],
-								requestBody: {
-									content: {
-										"application/json": {
-											schema: {
-												type: "object",
-												properties: {
-													status: { type: "string", example: "ON PROGRESS" },
-													operatorId: {
-														type: "string",
-														example: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
-													},
-												},
-											},
-										},
-										"multipart/form-data": {
-											schema: {
-												type: "object",
-												properties: {
-													status: { type: "string", example: "SELESAI" },
-													latitude: { type: "string", example: "-3.319381" },
-													longitude: { type: "string", example: "114.590111" },
-													dokumenLaporan: { type: "string", format: "binary" },
-													fotoKeluhan: { type: "string", format: "binary" },
-												},
-											},
-										},
-									},
-								},
-								responses: {
-									200: { description: "Status pengaduan berhasil diperbarui" },
-								},
-							},
-						},
-					},
-				};
+      <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+      <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+      <script>
+         window.onload = () => {
+            const spec = {
+               openapi: "3.0.0",
+               info: {
+                  title: "PERUMDA PALD - API Dokumentasi Pelayanan Pelanggan",
+                  version: "1.0.0",
+                  description:
+                     "Dokumentasi API interaktif untuk tim Frontend (Customer Service, Operator, dan Pengawas) PERUMDA PALD.",
+               },
+               servers: [
+                  {
+                     url: "http://localhost:5500/api",
+                     description: "Local Development Server",
+                  },
+               ],
+               paths: {
+                  "/users": {
+                     get: {
+                        summary: "Mendapatkan daftar semua user",
+                        description: "Mengambil list akun (CS, Operator, Pengawas) untuk manajemen internal.",
+                        tags: ["Users"],
+                        responses: {
+                           200: {
+                              description: "Berhasil mendapatkan daftar user",
+                              content: {
+                                 "application/json": {
+                                    schema: {
+                                       type: "array",
+                                       items: {
+                                          $ref: "#/components/schemas/UserResponse"
+                                       }
+                                    }
+                                 }
+                              }
+                           },
+                        },
+                     },
+                     post: {
+                        summary: "Membuat user baru",
+                        description: "Menambahkan user baru ke sistem.",
+                        tags: ["Users"],
+                        requestBody: {
+                           required: true,
+                           content: {
+                              "application/json": {
+                                 schema: {
+                                    type: "object",
+                                    required: ["namaUser", "email", "username", "password", "role"],
+                                    properties: {
+                                       namaUser: { type: "string", example: "Operator Lapangan 2" },
+                                       email: { type: "string", format: "email", example: "op2@pald.co.id" },
+                                       username: { type: "string", example: "operator2" },
+                                       password: { type: "string", format: "password", example: "password123" },
+                                       role: {
+                                          type: "string",
+                                          enum: ["CS", "Operator", "Pengawas"],
+                                          example: "Operator",
+                                       },
+                                    },
+                                 },
+                              },
+                           },
+                        },
+                        responses: {
+                           201: {
+                              description: "User berhasil dibuat",
+                              content: {
+                                 "application/json": {
+                                    schema: {
+                                       type: "object",
+                                       properties: {
+                                          message: { type: "string", example: "User berhasil dibuat" },
+                                          data: { $ref: "#/components/schemas/UserResponse" }
+                                       }
+                                    }
+                                 }
+                              }
+                           },
+                           400: { description: "Bad Request / Data tidak lengkap" }
+                        },
+                     },
+                  },
+                  "/pelanggan": {
+                     get: {
+                        summary: "Mendapatkan daftar semua pelanggan & pengaduan",
+                        tags: ["Pelanggan & Pengaduan"],
+                        parameters: [
+                           {
+                              name: "search",
+                              in: "query",
+                              description: "Cari berdasarkan nama pelanggan",
+                              required: false,
+                              schema: { type: "string" },
+                           },
+                        ],
+                        responses: {
+                           200: {
+                              description: "Berhasil mendapatkan data pengaduan pelanggan",
+                              content: {
+                                 "application/json": {
+                                    schema: {
+                                       type: "array",
+                                       items: { $ref: "#/components/schemas/PengaduanResponse" }
+                                    }
+                                 }
+                              }
+                           },
+                        },
+                     },
+                     post: {
+                        summary: "Input pengaduan baru dari pelanggan (Oleh CS)",
+                        tags: ["Pelanggan & Pengaduan"],
+                        requestBody: {
+                           required: true,
+                           content: {
+                              "application/json": {
+                                 schema: {
+                                    type: "object",
+                                    required: ["namaPelanggan", "noHp", "noKontakPdam", "alamat", "keluhan", "idUserCS"],
+                                    properties: {
+                                       namaPelanggan: { type: "string", example: "Pelanggan 1" },
+                                       noHp: { type: "string", example: "0877448710" },
+                                       noKontakPdam: { type: "string", example: "632831871383" },
+                                       alamat: { type: "string", example: "Sungai Andai No.5 RT.3/RW.2" },
+                                       keluhan: { type: "string", example: "Air Tersumbat" },
+                                       idUserCS: { type: "string", example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c" },
+                                    },
+                                 },
+                              },
+                           },
+                        },
+                        responses: {
+                           201: {
+                              description: "Pengaduan berhasil ditambahkan",
+                              content: {
+                                 "application/json": {
+                                    schema: {
+                                       type: "object",
+                                       properties: {
+                                          message: { type: "string", example: "Pengaduan berhasil ditambahkan" },
+                                          data: { $ref: "#/components/schemas/PengaduanResponse" }
+                                       }
+                                    }
+                                 }
+                              }
+                           },
+                        },
+                     },
+                  },
+                  "/pelanggan/filter": {
+                     get: {
+                        summary: "Filter pengaduan berdasarkan status",
+                        description: "Filter pengaduan dengan opsi status: PENDING, ON PROGRESS, SELESAI",
+                        tags: ["Pelanggan & Pengaduan"],
+                        parameters: [
+                           {
+                              name: "status",
+                              in: "query",
+                              required: true,
+                              schema: {
+                                 type: "string",
+                                 enum: ["PENDING", "ON PROGRESS", "SELESAI"],
+                              },
+                           },
+                        ],
+                        responses: {
+                           200: {
+                              description: "Berhasil mendapatkan data filter",
+                              content: {
+                                 "application/json": {
+                                    schema: {
+                                       type: "array",
+                                       items: { $ref: "#/components/schemas/PengaduanResponse" }
+                                    }
+                                 }
+                              }
+                           },
+                        },
+                     },
+                  },
+                  "/pelanggan/history": {
+                     get: {
+                        summary: "Mendapatkan riwayat pengaduan SELESAI",
+                        tags: ["Pelanggan & Pengaduan"],
+                        parameters: [
+                           {
+                              name: "search",
+                              in: "query",
+                              description: "Cari berdasarkan nama pelanggan",
+                              required: false,
+                              schema: { type: "string" },
+                           },
+                        ],
+                        responses: {
+                           200: {
+                              description: "Berhasil mendapatkan riwayat pengaduan",
+                              content: {
+                                 "application/json": {
+                                    schema: {
+                                       type: "array",
+                                       items: { $ref: "#/components/schemas/PengaduanResponse" }
+                                    }
+                                 }
+                              }
+                           },
+                        },
+                     },
+                  },
+                  "/pelanggan/{id}": {
+                     get: {
+                        summary: "Mendapatkan detail pengaduan berdasarkan ID",
+                        tags: ["Pelanggan & Pengaduan"],
+                        parameters: [
+                           {
+                              name: "id",
+                              in: "path",
+                              required: true,
+                              schema: { type: "string" },
+                           },
+                        ],
+                        responses: {
+                           200: {
+                              description: "Detail pengaduan ditemukan",
+                              content: {
+                                 "application/json": {
+                                    schema: { $ref: "#/components/schemas/PengaduanResponse" }
+                                 }
+                              }
+                           },
+                           404: { description: "Pengaduan tidak ditemukan" }
+                        },
+                     },
+                     put: {
+                        summary: "Update status pengaduan",
+                        description: "Update status ke ON PROGRESS (dengan Operator ID) atau SELESAI (dengan menyertakan lokasi & foto bukti).",
+                        tags: ["Pelanggan & Pengaduan"],
+                        parameters: [
+                           {
+                              name: "id",
+                              in: "path",
+                              required: true,
+                              schema: { type: "string" },
+                           },
+                        ],
+                        requestBody: {
+                           content: {
+                              "application/json": {
+                                 schema: {
+                                    type: "object",
+                                    properties: {
+                                       status: { type: "string", example: "ON PROGRESS" },
+                                       operatorId: { type: "string", example: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d" },
+                                    },
+                                 },
+                              },
+                              "multipart/form-data": {
+                                 schema: {
+                                    type: "object",
+                                    properties: {
+                                       status: { type: "string", example: "SELESAI" },
+                                       latitude: { type: "string", example: "-3.319381" },
+                                       longitude: { type: "string", example: "114.590111" },
+                                       dokumenLaporan: { type: "string", format: "binary" },
+                                       fotoKeluhan: { type: "string", format: "binary" },
+                                    },
+                                 },
+                              },
+                           },
+                        },
+                        responses: {
+                           200: {
+                              description: "Status pengaduan berhasil diperbarui",
+                              content: {
+                                 "application/json": {
+                                    schema: {
+                                       type: "object",
+                                       properties: {
+                                          message: { type: "string", example: "Status berhasil diperbarui" }
+                                       }
+                                    }
+                                 }
+                              }
+                           },
+                        },
+                     },
+                  },
+               },
+               components: {
+                  schemas: {
+                     UserResponse: {
+                        type: "object",
+                        properties: {
+                           id: { type: "string", example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c" },
+                           namaUser: { type: "string", example: "Operator Lapangan 2" },
+                           email: { type: "string", example: "op2@pald.co.id" },
+                           username: { type: "string", example: "operator2" },
+                           role: { type: "string", example: "Operator" },
+                           createdAt: { type: "string", example: "2026-03-30T08:00:00Z" }
+                        }
+                     },
+                     PengaduanResponse: {
+                        type: "object",
+                        properties: {
+                           id: { type: "string", example: "pelanggan-123" },
+                           namaPelanggan: { type: "string", example: "Pelanggan 1" },
+                           noHp: { type: "string", example: "0877448710" },
+                           noKontakPdam: { type: "string", example: "632831871383" },
+                           alamat: { type: "string", example: "Sungai Andai No.5 RT.3/RW.2" },
+                           keluhan: { type: "string", example: "Air Tersumbat" },
+                           status: { type: "string", example: "PENDING" },
+                           idUserCS: { type: "string", example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c" },
+                           operatorId: { type: "string", nullable: true, example: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d" },
+                           latitude: { type: "string", nullable: true, example: "-3.319381" },
+                           longitude: { type: "string", nullable: true, example: "114.590111" },
+                           dokumenLaporan: { type: "string", nullable: true, example: "/uploads/dokumen.pdf" },
+                           fotoKeluhan: { type: "string", nullable: true, example: "/uploads/foto.jpg" },
+                           createdAt: { type: "string", example: "2026-03-30T09:00:00Z" }
+                        }
+                     }
+                  }
+               }
+            };
 
-				SwaggerUIBundle({
-					spec: spec,
-					dom_id: "#swagger-ui",
-					presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-					layout: "BaseLayout",
-				});
-			};
-		</script>
-	</body>
+            SwaggerUIBundle({
+               spec: spec,
+               dom_id: "#swagger-ui",
+               presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+               layout: "BaseLayout",
+            });
+         };
+      </script>
+   </body>
 </html>
