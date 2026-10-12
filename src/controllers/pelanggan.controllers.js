@@ -144,10 +144,12 @@ export const updatePelanggan = async (req, res, next) => {
 			noHp,
 			noKontakPdam,
 			alamat,
+			keluhan,
 		} = req.body;
 
 		const pengaduanExist = await prisma.tabelPengaduan.findUnique({
 			where: { idPengaduan: id },
+			include: { pelanggan: true },
 		});
 
 		if (!pengaduanExist) {
@@ -156,54 +158,31 @@ export const updatePelanggan = async (req, res, next) => {
 				.json({ success: false, message: "Data pengaduan tidak ditemukan" });
 		}
 
-		// 1. Status ON PROGRESS
+		// 1. Update Data Pelanggan (Bisa dilakukan kapan saja tanpa terikat status)
+		if (namaPelanggan || noHp || noKontakPdam || alamat) {
+			await prisma.tabelPelanggan.update({
+				where: { idPelanggan: pengaduanExist.idPelanggan },
+				data: {
+					...(namaPelanggan && { namaPelanggan }),
+					...(noHp && { noHp }),
+					...(noKontakPdam && { noKontakPdam }),
+					...(alamat && { alamat }),
+				},
+			});
+		}
+
+		// 2. Handle Update Berdasarkan Status (Jika status dikirimkan)
 		if (rawStatus === "ON PROGRESS") {
 			const updated = await prisma.tabelPengaduan.update({
 				where: { idPengaduan: id },
 				data: {
 					status: "ON PROGRESS",
-					idUserPenanganan: operatorId,
+					...(operatorId && { idUserPenanganan: operatorId }),
+					...(keluhan && { keluhan }),
 					tanggalDiproses: new Date(),
 				},
 				include: { pelanggan: true },
 			});
-
-			return res.status(200).json({
-				success: true,
-				message: "Status berhasil diperbarui menjadi ON PROGRESS",
-				data: updated,
-			});
-		}
-
-		// 2. Status SELESAI
-		if (rawStatus === "SELESAI") {
-			const dokumenLaporanPath = req.files?.dokumenLaporan?.[0]?.path || null;
-			const fotoKeluhanPath = req.files?.fotoKeluhan?.[0]?.path || null;
-
-			const updated = await prisma.tabelPengaduan.update({
-				where: { idPengaduan: id },
-				data: {
-					status: "SELESAI",
-					latitude: latitude || null,
-					longitude: longitude || null,
-					dokumenLaporan: dokumenLaporanPath,
-					fotoKeluhan: fotoKeluhanPath,
-					tanggalSelesai: new Date(),
-				},
-				include: { pelanggan: true },
-			});
-
-			if (namaPelanggan || noHp || noKontakPdam || alamat) {
-				await prisma.tabelPelanggan.update({
-					where: { idPelanggan: updated.idPelanggan },
-					data: {
-						...(namaPelanggan && { namaPelanggan }),
-						...(noHp && { noHp }),
-						...(noKontakPdam && { noKontakPdam }),
-						...(alamat && { alamat }),
-					},
-				});
-			}
 
 			const formattedData = {
 				...updated,
@@ -213,14 +192,67 @@ export const updatePelanggan = async (req, res, next) => {
 
 			return res.status(200).json({
 				success: true,
-				message: "Data pengaduan berhasil diperbarui",
+				message: "Data berhasil diperbarui menjadi ON PROGRESS",
 				data: formattedData,
 			});
 		}
 
-		return res
-			.status(400)
-			.json({ success: false, message: "Status tidak valid" });
+		if (rawStatus === "SELESAI") {
+			const dokumenLaporanPath =
+				req.files?.dokumenLaporan?.[0]?.path || pengaduanExist.dokumenLaporan;
+			const fotoKeluhanPath =
+				req.files?.fotoKeluhan?.[0]?.path || pengaduanExist.fotoKeluhan;
+
+			const updated = await prisma.tabelPengaduan.update({
+				where: { idPengaduan: id },
+				data: {
+					status: "SELESAI",
+					...(latitude && { latitude }),
+					...(longitude && { longitude }),
+					...(dokumenLaporanPath && { dokumenLaporan: dokumenLaporanPath }),
+					...(fotoKeluhanPath && { fotoKeluhan: fotoKeluhanPath }),
+					...(keluhan && { keluhan }),
+					...(operatorId && { idUserPenanganan: operatorId }),
+					tanggalSelesai: new Date(),
+				},
+				include: { pelanggan: true },
+			});
+
+			const formattedData = {
+				...updated,
+				dokumenLaporan: formatFileUrl(req, updated.dokumenLaporan),
+				fotoKeluhan: formatFileUrl(req, updated.fotoKeluhan),
+			};
+
+			return res.status(200).json({
+				success: true,
+				message: "Data pengaduan berhasil diselesaikan dan diperbarui",
+				data: formattedData,
+			});
+		}
+
+		// 3. Jika status kosong atau hanya ingin mengedit data teks (misal: ubah nama, alamat, keluhan tanpa mengubah status)
+		const updateDataPayload = {};
+		if (keluhan) updateDataPayload.keluhan = keluhan;
+		if (operatorId) updateDataPayload.idUserPenanganan = operatorId;
+
+		const updated = await prisma.tabelPengaduan.update({
+			where: { idPengaduan: id },
+			data: updateDataPayload,
+			include: { pelanggan: true },
+		});
+
+		const formattedData = {
+			...updated,
+			dokumenLaporan: formatFileUrl(req, updated.dokumenLaporan),
+			fotoKeluhan: formatFileUrl(req, updated.fotoKeluhan),
+		};
+
+		return res.status(200).json({
+			success: true,
+			message: "Data pelanggan dan pengaduan berhasil diperbarui",
+			data: formattedData,
+		});
 	} catch (error) {
 		next(error);
 	}
