@@ -19,6 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static uploads folder agar file/gambar dapat diakses langsung oleh browser
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Serve static documentation
+app.use("/docs", express.static(path.join(__dirname, "docs")));
+
 // API Routes
 app.use("/api", userRoutes);
 app.use("/api", pelangganRoutes);
