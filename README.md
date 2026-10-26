@@ -1,0 +1,26 @@
+FILE DB.JS DI CONFIG JANGAN PERNAH DI OTAK ATIK
+BELUM ADA DOKUMENTASI
+
+# how to use it (in case aku ngulang)
+<code>
+   npm install
+   npm run dev
+   npx prisma init
+   npx prisma generate
+</code>
+
+# API Customer Service
+- '/pelanggan' GET all pelanggan (sudah)
+- '/pelanggan' POST pelanggan (sudah)
+- '/pelanggan/:id' GET detail pelanggan (sudah)
+- '/pelanggan/:id' PUT detail pelanggan (sudah)
+- '/pelanggan/:status' GET all pelanggan by status (harusnya sudah)
+- '/history' GET all history pelanggan (harusnya sudah)
+- '/user' GET detail user
+
+## CATATAN LAIN
+Pakai params jika data adalah ID/identitas unik dari resource yang dituju.
+
+Pakai query jika data digunakan untuk filtering, pencarian, pagination, atau sorting.
+
+Pakai body jika Anda ingin membuat/mengubah data yang memiliki banyak kolom/field.

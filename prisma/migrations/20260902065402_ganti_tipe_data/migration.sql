@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Pelanggan` MODIFY `noPdam` VARCHAR(191) NOT NULL,
+    MODIFY `noTelp` VARCHAR(191) NOT NULL;

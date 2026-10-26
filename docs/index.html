@@ -1,0 +1,1212 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dokumentasi API - WebApp Pelayanan Pelanggan PERUMDA PALD</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-light: #e0f2fe;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header & Hero */
+    .header-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0369a1 100%);
+      color: #ffffff;
+      padding: 40px 24px 48px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #7dd3fc;
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: #cbd5e1;
+      max-width: 820px;
+      line-height: 1.6;
+      margin: 0 0 24px 0;
+    }
+
+    /* Workflow Cards */
+    .workflow-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .workflow-step {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .workflow-step:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .step-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #38bdf8;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .step-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .step-text {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-progress { background: #e0f2fe; color: #0369a1; }
+    .badge-done { background: #dcfce7; color: #166534; }
+
+    /* Swagger UI Wrapper */
+    #swagger-ui {
+      max-width: 1200px;
+      margin: -20px auto 40px;
+      background: #ffffff;
+      padding: 24px 32px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border);
+    }
+
+    /* Swagger Custom Overrides */
+    .swagger-ui .topbar { display: none; }
+    .swagger-ui .information-container { display: none; }
+    .swagger-ui { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .swagger-ui .opblock-tag {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 10px;
+      margin-top: 24px;
+    }
+    .swagger-ui .opblock {
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      margin: 12px 0;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+    }
+    .swagger-ui .opblock-summary-method {
+      border-radius: 6px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 6px 12px;
+    }
+    .swagger-ui code, .swagger-ui pre {
+      font-family: 'JetBrains Mono', monospace !important;
+    }
+    .swagger-ui .btn.execute {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+    .swagger-ui .btn.execute:hover {
+      background-color: var(--primary-dark);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+    }
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <header class="header-hero">
+    <div class="container">
+      <div class="hero-badge">
+        <span>⚡ REST API v1.0.0</span>
+      </div>
+      <h1 class="hero-title">PERUMDA PALD - API Pelayanan Pelanggan</h1>
+      <p class="hero-desc">
+        Dokumentasi resmi dan antarmuka pengujian interaktif untuk backend Sistem Pelayanan & Pengaduan Pelanggan PERUMDA PALD.
+        Dibangun dengan Node.js, Express, Prisma ORM, dan MariaDB/MySQL.
+      </p>
+
+      <!-- Alur Penanganan -->
+      <div class="workflow-container">
+        <div class="workflow-step">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Pelaporan Masuk</div>
+            <span class="badge-status badge-pending">PENDING</span>
+          </div>
+          <p class="step-text">
+            Customer Service (CS) menerima laporan pelanggan dan mencatatnya melalui <code>POST /api/pelanggan</code>.
+          </p>
+        </div>
+
+        <div class="workflow-step">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">Penugasan Lapangan</div>
+            <span class="badge-status badge-progress">ON PROGRESS</span>
+          </div>
+          <p class="step-text">
+            Operator ditugaskan untuk menangani pengaduan melalui <code>PUT /api/pelanggan/{id}</code> dengan menyertakan <code>operatorId</code>.
+          </p>
+        </div>
+
+        <div class="workflow-step">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-title">Penyelesaian Laporan</div>
+            <span class="badge-status badge-done">SELESAI</span>
+          </div>
+          <p class="step-text">
+            Operator menyelesaikan tugas dengan mengunggah bukti foto keluhan, dokumen laporan, dan koordinat GPS (lat, long).
+          </p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Swagger UI Section -->
+  <main>
+    <div id="swagger-ui"></div>
+  </main>
+
+  <footer>
+    <div class="container">
+      &copy; 2026 PERUMDA PALD - Sistem Informasi Pelayanan Pelanggan. Dibuat untuk integrasi tim Frontend (CS, Operator, Pengawas).
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+  <script>
+    window.onload = () => {
+      const spec = {
+        openapi: "3.0.0",
+        info: {
+          title: "PERUMDA PALD - API Dokumentasi Pelayanan Pelanggan",
+          version: "1.0.0",
+          description: "Dokumentasi API interaktif untuk tim Frontend (Customer Service, Operator, dan Pengawas) PERUMDA PALD."
+        },
+        servers: [
+          {
+            url: "http://localhost:5500/api",
+            description: "Default Server (Port 5500)"
+          },
+          {
+            url: "http://localhost:3000/api",
+            description: "Alternative Development Server (Port 3000)"
+          }
+        ],
+        tags: [
+          {
+            name: "Pelanggan & Pengaduan",
+            description: "Endpoint manajemen pelanggan dan alur tiket penanganan pengaduan"
+          },
+          {
+            name: "Users",
+            description: "Endpoint manajemen user internal (CS, Operator, Pengawas)"
+          },
+          {
+            name: "Media & Berkas",
+            description: "Akses berkas statis (foto & dokumen laporan) yang diupload"
+          }
+        ],
+        paths: {
+          "/users": {
+            get: {
+              tags: ["Users"],
+              summary: "Mendapatkan daftar semua user",
+              description: "Mengambil seluruh data user (CS, Operator, Pengawas) yang terurut berdasarkan waktu pembuatan terbaru (createdAt DESC). Password disembunyikan secara otomatis demi keamanan.",
+              responses: {
+                200: {
+                  description: "Daftar user berhasil diambil",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/UserListResponse"
+                      }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            },
+            post: {
+              tags: ["Users"],
+              summary: "Membuat user baru",
+              description: "Menambahkan akun user internal baru ke database.",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      $ref: "#/components/schemas/CreateUserRequest"
+                    }
+                  }
+                }
+              },
+              responses: {
+                201: {
+                  description: "User berhasil dibuat",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/CreateUserSuccessResponse"
+                      }
+                    }
+                  }
+                },
+                400: {
+                  description: "Bad Request - Validasi payload gagal",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+
+          "/pelanggan": {
+            get: {
+              tags: ["Pelanggan & Pengaduan"],
+              summary: "Mendapatkan daftar semua data pengaduan",
+              description: "Mengambil semua daftar pengaduan pelanggan beserta relasi data pelanggan, user penerima (CS), dan user penanganan (Operator). Mendukung filter pencarian nama pelanggan dan otomatis memformat URL dokumen/foto yang dapat diakses browser.",
+              parameters: [
+                {
+                  name: "search",
+                  in: "query",
+                  description: "Filter pencarian substring berdasarkan nama pelanggan",
+                  required: false,
+                  schema: {
+                    type: "string",
+                    example: "Budi"
+                  }
+                }
+              ],
+              responses: {
+                200: {
+                  description: "Daftar pengaduan berhasil didapatkan",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/PengaduanListResponse"
+                      }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            },
+            post: {
+              tags: ["Pelanggan & Pengaduan"],
+              summary: "Input pengaduan baru dari pelanggan (CS)",
+              description: "Digunakan oleh Customer Service (CS) untuk mendaftarkan pelanggan baru sekaligus membuat tiket pengaduan pertama dengan status awal `PENDING` dan `tanggalDiterima` waktu saat ini melalui Prisma Transaction.",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      $ref: "#/components/schemas/CreatePengaduanRequest"
+                    }
+                  }
+                }
+              },
+              responses: {
+                201: {
+                  description: "Pengaduan berhasil ditambahkan",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/CreatePengaduanResponse"
+                      }
+                    }
+                  }
+                },
+                400: {
+                  description: "Bad Request - `idUserCS` wajib diisi",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" },
+                      example: {
+                        success: false,
+                        message: "idUserCS wajib diisi"
+                      }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+
+          "/pelanggan/filter": {
+            get: {
+              tags: ["Pelanggan & Pengaduan"],
+              summary: "Filter pengaduan berdasarkan status",
+              description: "Mengambil daftar pengaduan yang disaring berdasarkan status (`PENDING`, `ON PROGRESS`, atau `SELESAI`). Menyertakan relasi pelanggan dan operator penanganan.",
+              parameters: [
+                {
+                  name: "status",
+                  in: "query",
+                  description: "Status tiket yang ingin disaring (case-insensitive: otomatis di-uppercase)",
+                  required: false,
+                  schema: {
+                    type: "string",
+                    enum: ["PENDING", "ON PROGRESS", "SELESAI"],
+                    example: "PENDING"
+                  }
+                }
+              ],
+              responses: {
+                200: {
+                  description: "Data pengaduan hasil filter berhasil diambil",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/PengaduanListResponse"
+                      }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+
+          "/pelanggan/history": {
+            get: {
+              tags: ["Pelanggan & Pengaduan"],
+              summary: "Mendapatkan riwayat pengaduan yang telah SELESAI",
+              description: "Mengambil semua riwayat tiket pengaduan yang berstatus `SELESAI`. Data diurutkan berdasarkan tanggal penyelesaian terbaru (`tanggalSelesai DESC`) dan mendukung parameter pencarian nama pelanggan.",
+              parameters: [
+                {
+                  name: "search",
+                  in: "query",
+                  description: "Pencarian substring berdasarkan nama pelanggan",
+                  required: false,
+                  schema: {
+                    type: "string",
+                    example: "Ahmad"
+                  }
+                }
+              ],
+              responses: {
+                200: {
+                  description: "Riwayat pengaduan berhasil diambil",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/PengaduanListResponse"
+                      }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+
+          "/pelanggan/{id}": {
+            get: {
+              tags: ["Pelanggan & Pengaduan"],
+              summary: "Mendapatkan detail pengaduan berdasarkan ID",
+              description: "Mengambil data lengkap satu pengaduan berdasarkan UUID `idPengaduan`, termasuk informasi profil pelanggan, petugas penerima, dan petugas penanganan.",
+              parameters: [
+                {
+                  name: "id",
+                  in: "path",
+                  description: "UUID dari Pengaduan (`idPengaduan`)",
+                  required: true,
+                  schema: {
+                    type: "string",
+                    example: "0788647a-c3cb-4560-848f-ef12c6a0846d"
+                  }
+                }
+              ],
+              responses: {
+                200: {
+                  description: "Detail pengaduan ditemukan",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/PengaduanDetailResponse"
+                      }
+                    }
+                  }
+                },
+                404: {
+                  description: "Data pengaduan tidak ditemukan",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" },
+                      example: {
+                        success: false,
+                        message: "Data pengaduan tidak ditemukan"
+                      }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            },
+            put: {
+              tags: ["Pelanggan & Pengaduan"],
+              summary: "Memperbarui data pengaduan & pelanggan / transisi status",
+              description: `Endpoint multifungsi yang dapat menerima \`multipart/form-data\` (ketika menyertakan berkas foto/dokumen) atau \`application/json\` / \`x-www-form-urlencoded\`.
+
+**Alur & Kegunaan:**
+1. **Pembaruan Profil Pelanggan**: Kirimkan \`namaPelanggan\`, \`noHp\`, \`noKontakPdam\`, \`alamat\` untuk memperbarui profil pelanggan secara langsung kapan saja.
+2. **Ubah Status ke ON PROGRESS**: Kirimkan \`status: "ON PROGRESS"\` beserta \`operatorId\` (UUID Operator). Otomatis menetapkan \`tanggalDiproses\` menjadi waktu sekarang.
+3. **Ubah Status ke SELESAI**: Kirimkan \`status: "SELESAI"\` beserta upload berkas (\`dokumenLaporan\`, \`fotoKeluhan\`), koordinat (\`latitude\`, \`longitude\`), serta \`operatorId\`. Otomatis menetapkan \`tanggalSelesai\` menjadi waktu sekarang.
+4. **Perubahan Teks Bebas**: Dapat mengubah \`keluhan\` atau \`operatorId\` tanpa perlu mengubah status tiket.`,
+              parameters: [
+                {
+                  name: "id",
+                  in: "path",
+                  description: "UUID dari Pengaduan (`idPengaduan`)",
+                  required: true,
+                  schema: {
+                    type: "string",
+                    example: "0788647a-c3cb-4560-848f-ef12c6a0846d"
+                  }
+                }
+              ],
+              requestBody: {
+                description: "Gunakan `multipart/form-data` saat mengupload file dokumen laporan atau foto keluhan, atau `application/json` untuk update status/teks saja.",
+                content: {
+                  "multipart/form-data": {
+                    schema: {
+                      $ref: "#/components/schemas/UpdatePengaduanMultipartRequest"
+                    }
+                  },
+                  "application/json": {
+                    schema: {
+                      $ref: "#/components/schemas/UpdatePengaduanJsonRequest"
+                    }
+                  }
+                }
+              },
+              responses: {
+                200: {
+                  description: "Pengaduan / status berhasil diperbarui",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/UpdatePengaduanSuccessResponse"
+                      }
+                    }
+                  }
+                },
+                404: {
+                  description: "Data pengaduan tidak ditemukan",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" },
+                      example: {
+                        success: false,
+                        message: "Data pengaduan tidak ditemukan"
+                      }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+
+          "/uploads/{filename}": {
+            get: {
+              tags: ["Media & Berkas"],
+              summary: "Mengakses file static berkas yang diupload",
+              description: "Mengakses file dokumen laporan (PDF/gambar) atau foto bukti keluhan dari folder static `uploads/` yang disajikan oleh Express.",
+              parameters: [
+                {
+                  name: "filename",
+                  in: "path",
+                  description: "Nama file unik yang tersimpan di server",
+                  required: true,
+                  schema: {
+                    type: "string",
+                    example: "fotoKeluhan-1741584920123-987654321.jpg"
+                  }
+                }
+              ],
+              servers: [
+                {
+                  url: "http://localhost:5500",
+                  description: "Static Root Server (Port 5500)"
+                },
+                {
+                  url: "http://localhost:3000",
+                  description: "Static Root Server (Port 3000)"
+                }
+              ],
+              responses: {
+                200: {
+                  description: "File media biner (gambar JPG/PNG atau dokumen PDF)",
+                  content: {
+                    "image/*": {},
+                    "application/pdf": {}
+                  }
+                },
+                404: {
+                  description: "File tidak ditemukan"
+                }
+              }
+            }
+          }
+        },
+
+        components: {
+          schemas: {
+            ErrorResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: false
+                },
+                message: {
+                  type: "string",
+                  example: "Terjadi kesalahan internal server"
+                }
+              }
+            },
+
+            UserRole: {
+              type: "string",
+              enum: ["CS", "Operator", "Pengawas"],
+              example: "CS"
+            },
+
+            UserData: {
+              type: "object",
+              properties: {
+                idUser: {
+                  type: "string",
+                  format: "uuid",
+                  example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c"
+                },
+                namaUser: {
+                  type: "string",
+                  example: "Budi Santoso (CS 1)"
+                },
+                email: {
+                  type: "string",
+                  format: "email",
+                  example: "budi.cs@pald.co.id"
+                },
+                username: {
+                  type: "string",
+                  example: "budics"
+                },
+                role: {
+                  $ref: "#/components/schemas/UserRole"
+                },
+                createdAt: {
+                  type: "string",
+                  format: "date-time",
+                  example: "2026-03-30T08:00:00.000Z"
+                }
+              }
+            },
+
+            UserListResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: true
+                },
+                data: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/UserData"
+                  }
+                }
+              }
+            },
+
+            CreateUserRequest: {
+              type: "object",
+              required: ["namaUser", "email", "username", "password", "role"],
+              properties: {
+                namaUser: {
+                  type: "string",
+                  example: "Ahmad Operator 1"
+                },
+                email: {
+                  type: "string",
+                  format: "email",
+                  example: "ahmad.op@pald.co.id"
+                },
+                username: {
+                  type: "string",
+                  example: "ahmad_op"
+                },
+                password: {
+                  type: "string",
+                  format: "password",
+                  example: "PasswordKuat#2026"
+                },
+                role: {
+                  $ref: "#/components/schemas/UserRole",
+                  example: "Operator"
+                }
+              }
+            },
+
+            CreateUserSuccessResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: true
+                },
+                message: {
+                  type: "string",
+                  example: "User berhasil dibuat"
+                },
+                data: {
+                  $ref: "#/components/schemas/UserData"
+                }
+              }
+            },
+
+            PelangganData: {
+              type: "object",
+              properties: {
+                idPelanggan: {
+                  type: "string",
+                  format: "uuid",
+                  example: "8f149177-1629-4d64-9ce5-e23118a8b191"
+                },
+                noKontakPdam: {
+                  type: "string",
+                  nullable: true,
+                  example: "632831871383"
+                },
+                namaPelanggan: {
+                  type: "string",
+                  example: "Hj. Siti Rahmah"
+                },
+                noHp: {
+                  type: "string",
+                  example: "081234567890"
+                },
+                alamat: {
+                  type: "string",
+                  nullable: true,
+                  example: "Jl. Veteran No. 12 RT. 05 RW. 02, Banjarmasin"
+                },
+                createdAt: {
+                  type: "string",
+                  format: "date-time",
+                  example: "2026-03-30T09:15:00.000Z"
+                }
+              }
+            },
+
+            PengaduanData: {
+              type: "object",
+              properties: {
+                idPengaduan: {
+                  type: "string",
+                  format: "uuid",
+                  example: "0788647a-c3cb-4560-848f-ef12c6a0846d"
+                },
+                idPelanggan: {
+                  type: "string",
+                  format: "uuid",
+                  example: "8f149177-1629-4d64-9ce5-e23118a8b191"
+                },
+                idUserPenerima: {
+                  type: "string",
+                  format: "uuid",
+                  example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c"
+                },
+                idUserPenanganan: {
+                  type: "string",
+                  format: "uuid",
+                  nullable: true,
+                  example: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+                },
+                keluhan: {
+                  type: "string",
+                  example: "Pipa saluran limbah mampet dan air meluap ke halaman rumah."
+                },
+                status: {
+                  type: "string",
+                  enum: ["PENDING", "ON PROGRESS", "SELESAI"],
+                  example: "ON PROGRESS"
+                },
+                latitude: {
+                  type: "string",
+                  nullable: true,
+                  example: "-3.319381"
+                },
+                longitude: {
+                  type: "string",
+                  nullable: true,
+                  example: "114.590111"
+                },
+                dokumenLaporan: {
+                  type: "string",
+                  nullable: true,
+                  example: "http://localhost:5500/uploads/dokumenLaporan-1741584920123-123456789.pdf"
+                },
+                fotoKeluhan: {
+                  type: "string",
+                  nullable: true,
+                  example: "http://localhost:5500/uploads/fotoKeluhan-1741584920123-987654321.jpg"
+                },
+                tanggalDiterima: {
+                  type: "string",
+                  format: "date-time",
+                  example: "2026-03-30T09:15:00.000Z"
+                },
+                tanggalDiproses: {
+                  type: "string",
+                  format: "date-time",
+                  nullable: true,
+                  example: "2026-03-30T10:00:00.000Z"
+                },
+                tanggalSelesai: {
+                  type: "string",
+                  format: "date-time",
+                  nullable: true,
+                  example: "2026-03-30T13:45:00.000Z"
+                },
+                createdAt: {
+                  type: "string",
+                  format: "date-time",
+                  example: "2026-03-30T09:15:00.000Z"
+                },
+                updatedAt: {
+                  type: "string",
+                  format: "date-time",
+                  nullable: true,
+                  example: "2026-03-30T10:00:00.000Z"
+                },
+                pelanggan: {
+                  $ref: "#/components/schemas/PelangganData"
+                },
+                penerima: {
+                  type: "object",
+                  properties: {
+                    namaUser: { type: "string", example: "Budi Santoso" },
+                    role: { type: "string", example: "CS" }
+                  }
+                },
+                penangani: {
+                  type: "object",
+                  nullable: true,
+                  properties: {
+                    namaUser: { type: "string", example: "Ahmad Operator" },
+                    role: { type: "string", example: "Operator" }
+                  }
+                }
+              }
+            },
+
+            PengaduanListResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: true
+                },
+                data: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/PengaduanData"
+                  }
+                }
+              }
+            },
+
+            PengaduanDetailResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: true
+                },
+                data: {
+                  $ref: "#/components/schemas/PengaduanData"
+                }
+              }
+            },
+
+            CreatePengaduanRequest: {
+              type: "object",
+              required: ["namaPelanggan", "noHp", "keluhan", "idUserCS"],
+              properties: {
+                namaPelanggan: {
+                  type: "string",
+                  example: "Hj. Siti Rahmah"
+                },
+                noHp: {
+                  type: "string",
+                  example: "081234567890"
+                },
+                noKontakPdam: {
+                  type: "string",
+                  example: "632831871383"
+                },
+                alamat: {
+                  type: "string",
+                  example: "Jl. Veteran No. 12 RT. 05 RW. 02, Banjarmasin"
+                },
+                keluhan: {
+                  type: "string",
+                  example: "Pipa saluran pembuangan tersumbat dan menimbulkan bau tak sedap."
+                },
+                idUserCS: {
+                  type: "string",
+                  format: "uuid",
+                  description: "UUID dari user CS yang menerima laporan ini",
+                  example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c"
+                }
+              }
+            },
+
+            CreatePengaduanResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: true
+                },
+                message: {
+                  type: "string",
+                  example: "Pengaduan berhasil ditambahkan"
+                },
+                data: {
+                  type: "object",
+                  properties: {
+                    pelangganBaru: {
+                      $ref: "#/components/schemas/PelangganData"
+                    },
+                    pengaduanBaru: {
+                      type: "object",
+                      properties: {
+                        idPengaduan: { type: "string", format: "uuid", example: "0788647a-c3cb-4560-848f-ef12c6a0846d" },
+                        idPelanggan: { type: "string", format: "uuid", example: "8f149177-1629-4d64-9ce5-e23118a8b191" },
+                        idUserPenerima: { type: "string", format: "uuid", example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c" },
+                        keluhan: { type: "string", example: "Pipa saluran pembuangan tersumbat..." },
+                        status: { type: "string", example: "PENDING" },
+                        tanggalDiterima: { type: "string", format: "date-time", example: "2026-03-30T09:15:00.000Z" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+
+            UpdatePengaduanMultipartRequest: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  enum: ["ON PROGRESS", "SELESAI"],
+                  description: "Status baru pengaduan. Kirim 'ON PROGRESS' untuk mengambil tugas, atau 'SELESAI' jika tugas telah rampung.",
+                  example: "SELESAI"
+                },
+                operatorId: {
+                  type: "string",
+                  format: "uuid",
+                  description: "ID User petugas Operator yang menangani pengaduan ini (idUserPenanganan)",
+                  example: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+                },
+                latitude: {
+                  type: "string",
+                  description: "Titik koordinat latitude lokasi penanganan (wajib/disarankan saat status SELESAI)",
+                  example: "-3.319381"
+                },
+                longitude: {
+                  type: "string",
+                  description: "Titik koordinat longitude lokasi penanganan (wajib/disarankan saat status SELESAI)",
+                  example: "114.590111"
+                },
+                dokumenLaporan: {
+                  type: "string",
+                  format: "binary",
+                  description: "File dokumen berita acara / laporan hasil pengerjaan (PDF atau Gambar, Max 10MB)"
+                },
+                fotoKeluhan: {
+                  type: "string",
+                  format: "binary",
+                  description: "File foto bukti dokumentasi pengerjaan / penanganan keluhan (Max 10MB)"
+                },
+                keluhan: {
+                  type: "string",
+                  description: "Update catatan isi keluhan jika ada rincian tambahan",
+                  example: "Pipa telah disedot dan dialirkan kembali dengan normal."
+                },
+                namaPelanggan: {
+                  type: "string",
+                  description: "Koreksi nama pelanggan jika diperlukan",
+                  example: "Hj. Siti Rahmah (Koreksi)"
+                },
+                noHp: {
+                  type: "string",
+                  description: "Koreksi nomor handphone pelanggan",
+                  example: "081234567899"
+                },
+                noKontakPdam: {
+                  type: "string",
+                  description: "Koreksi nomor kontak/sambungan PDAM",
+                  example: "632831871383"
+                },
+                alamat: {
+                  type: "string",
+                  description: "Koreksi alamat pelanggan",
+                  example: "Jl. Veteran No. 12 RT. 05 RW. 02, Banjarmasin"
+                }
+              }
+            },
+
+            UpdatePengaduanJsonRequest: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  enum: ["ON PROGRESS", "SELESAI"],
+                  example: "ON PROGRESS"
+                },
+                operatorId: {
+                  type: "string",
+                  format: "uuid",
+                  example: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+                },
+                latitude: {
+                  type: "string",
+                  example: "-3.319381"
+                },
+                longitude: {
+                  type: "string",
+                  example: "114.590111"
+                },
+                keluhan: {
+                  type: "string",
+                  example: "Pipa saluran pembuangan telah dicek oleh teknisi."
+                },
+                namaPelanggan: {
+                  type: "string",
+                  example: "Hj. Siti Rahmah"
+                },
+                noHp: {
+                  type: "string",
+                  example: "081234567890"
+                },
+                noKontakPdam: {
+                  type: "string",
+                  example: "632831871383"
+                },
+                alamat: {
+                  type: "string",
+                  example: "Jl. Veteran No. 12 RT. 05 RW. 02, Banjarmasin"
+                }
+              }
+            },
+
+            UpdatePengaduanSuccessResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: true
+                },
+                message: {
+                  type: "string",
+                  example: "Data pengaduan berhasil diselesaikan dan diperbarui"
+                },
+                data: {
+                  $ref: "#/components/schemas/PengaduanData"
+                }
+              }
+            }
+          }
+        }
+      };
+
+      SwaggerUIBundle({
+        spec: spec,
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout",
+        defaultModelsExpandDepth: 1,
+        defaultModelExpandDepth: 2,
+        docExpansion: "list",
+        displayRequestDuration: true,
+        filter: true,
+        showExtensions: true,
+        showCommonExtensions: true
+      });
+    };
+  </script>
+</body>
+</html>
