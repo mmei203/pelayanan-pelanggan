@@ -1,0 +1,45 @@
+/* 1. Import Font Lexend dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+/* 2. Definisi Variabel Warna dan Font Standard CSS */
+:root {
+  --font-lexend: 'Lexend', sans-serif;
+
+  --color-app-bg: #EBF2FA;
+  --color-app-primary: #427AA1;
+  --color-app-primary2: #064789;
+  --color-app-secondary: #679436;
+  --color-app-error: #F44336;
+  --color-app-warning: #FFC107;
+  --color-app-success: #198754;
+  --color-app-info: #0DCAF0;
+  --color-app-text: #000000;
+}
+
+/* 3. Terapkan Font & Warna ke Seluruh Aplikasi */
+* {
+  font-family: var(--font-lexend) !important;
+}
+
+body {
+  background-color: var(--color-app-bg);
+  color: var(--color-app-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 4. Utility Class Warna untuk Tailwind (Bisa Dipakai di Class Vue) */
+.bg-app-bg { background-color: var(--color-app-bg); }
+.bg-app-primary { background-color: var(--color-app-primary); }
+.bg-app-primary2 { background-color: var(--color-app-primary2); }
+.bg-app-secondary { background-color: var(--color-app-secondary); }
+.bg-app-error { background-color: var(--color-app-error); }
+.bg-app-warning { background-color: var(--color-app-warning); }
+.bg-app-success { background-color: var(--color-app-success); }
+.bg-app-info { background-color: var(--color-app-info); }
+
+.text-app-text { color: var(--color-app-text); }
+.text-app-primary { color: var(--color-app-primary); }
+.text-app-secondary { color: var(--color-app-secondary); }
+.text-app-primary2 { color: var(--color-app-primary2); }
