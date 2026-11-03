@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     28/09/2026 10:06:19                          */
+/* Created on:     03/11/2026 14:43:28                          */
 /*==============================================================*/
 
 
@@ -32,8 +32,8 @@ create table TABEL_PENGADUAN
 (
    ID_PENGADUAN         varchar(36) not null,
    ID_PELANGGAN         varchar(36) not null,
-   ID_USER_PENERIMA     varchar(36) not null,
-   ID_USER_PENANGANAN   varchar(36),
+   ID_USER              varchar(36) not null,
+   TAB_ID_USER          varchar(36),
    KELUHAN              text not null,
    STATUS               varchar(20) not null,
    LATITUDE             varchar(50),
@@ -45,6 +45,7 @@ create table TABEL_PENGADUAN
    TANGGAL_SELESAI      datetime,
    CREATED_AT           timestamp not null,
    UPDATED_AT           timestamp,
+   SALURAN_KELUHAN      enum('WhatsApp', 'Telepon', 'Dtang Ketempa') not null,
    primary key (ID_PENGADUAN)
 );
 
@@ -58,7 +59,7 @@ create table TABEL_USER
    EMAIL                varchar(255) not null,
    USERNAME             varchar(255) not null,
    PASSWORD             varchar(255) not null,
-   ROLE                 ENUM('CS','Operator','Pengawas') not null,
+   ROLE                 ENUM('Super Admin', 'CS', 'Operator', Pengawas') not null,
    CREATED_AT           timestamp,
    primary key (ID_USER),
    key AK_IDENTIFIRE_EMAIL (EMAIL),
@@ -68,9 +69,9 @@ create table TABEL_USER
 alter table TABEL_PENGADUAN add constraint FK_MEMBUAT foreign key (ID_PELANGGAN)
       references TABEL_PELANGGAN (ID_PELANGGAN) on delete restrict on update restrict;
 
-alter table TABEL_PENGADUAN add constraint FK_MENANGANI foreign key (ID_USER_PENANGANAN)
+alter table TABEL_PENGADUAN add constraint FK_MENANGANI foreign key (TAB_ID_USER)
       references TABEL_USER (ID_USER) on delete restrict on update restrict;
 
-alter table TABEL_PENGADUAN add constraint FK_MENERIMA foreign key (ID_USER_PENERIMA)
+alter table TABEL_PENGADUAN add constraint FK_MENERIMA foreign key (ID_USER)
       references TABEL_USER (ID_USER) on delete restrict on update restrict;
 
