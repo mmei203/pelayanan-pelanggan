@@ -396,6 +396,28 @@
                     type: "string",
                     example: "Budi"
                   }
+                },
+                {
+                  name: "sumberAduan",
+                  in: "query",
+                  description: "Filter status pengadu: 'Pelanggan' atau 'Non_Pelangan'",
+                  required: false,
+                  schema: {
+                    type: "string",
+                    enum: ["Pelanggan", "Non_Pelangan"],
+                    example: "Pelanggan"
+                  }
+                },
+                {
+                  name: "saluranKeluhan",
+                  in: "query",
+                  description: "Filter saluran laporan: 'WhatsApp', 'Telepon', atau 'Datang_Ketempat'",
+                  required: false,
+                  schema: {
+                    type: "string",
+                    enum: ["WhatsApp", "Telepon", "Datang_Ketempat"],
+                    example: "WhatsApp"
+                  }
                 }
               ],
               responses: {
@@ -484,6 +506,28 @@
                     enum: ["PENDING", "ON PROGRESS", "SELESAI"],
                     example: "PENDING"
                   }
+                },
+                {
+                  name: "sumberAduan",
+                  in: "query",
+                  description: "Filter status pengadu: 'Pelanggan' atau 'Non_Pelangan'",
+                  required: false,
+                  schema: {
+                    type: "string",
+                    enum: ["Pelanggan", "Non_Pelangan"],
+                    example: "Pelanggan"
+                  }
+                },
+                {
+                  name: "saluranKeluhan",
+                  in: "query",
+                  description: "Filter saluran laporan: 'WhatsApp', 'Telepon', atau 'Datang_Ketempat'",
+                  required: false,
+                  schema: {
+                    type: "string",
+                    enum: ["WhatsApp", "Telepon", "Datang_Ketempat"],
+                    example: "WhatsApp"
+                  }
                 }
               ],
               responses: {
@@ -523,6 +567,28 @@
                   schema: {
                     type: "string",
                     example: "Ahmad"
+                  }
+                },
+                {
+                  name: "sumberAduan",
+                  in: "query",
+                  description: "Filter status pengadu: 'Pelanggan' atau 'Non_Pelangan'",
+                  required: false,
+                  schema: {
+                    type: "string",
+                    enum: ["Pelanggan", "Non_Pelangan"],
+                    example: "Pelanggan"
+                  }
+                },
+                {
+                  name: "saluranKeluhan",
+                  in: "query",
+                  description: "Filter saluran laporan: 'WhatsApp', 'Telepon', atau 'Datang_Ketempat'",
+                  required: false,
+                  schema: {
+                    type: "string",
+                    enum: ["WhatsApp", "Telepon", "Datang_Ketempat"],
+                    example: "WhatsApp"
                   }
                 }
               ],
@@ -998,6 +1064,18 @@
                   nullable: true,
                   example: "2026-03-30T10:00:00.000Z"
                 },
+                sumberAduan: {
+                  type: "string",
+                  enum: ["Pelanggan", "Non_Pelangan"],
+                  description: "Kategori status pelapor: Pelanggan (terdaftar dengan no kontrak PDAM) atau Non_Pelangan",
+                  example: "Pelanggan"
+                },
+                saluranKeluhan: {
+                  type: "string",
+                  enum: ["WhatsApp", "Telepon", "Datang_Ketempat"],
+                  description: "Saluran komunikasi masuknya aduan",
+                  example: "WhatsApp"
+                },
                 pelanggan: {
                   $ref: "#/components/schemas/PelangganData"
                 },
@@ -1077,6 +1155,18 @@
                   format: "uuid",
                   description: "UUID dari user CS yang menerima laporan ini",
                   example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c"
+                },
+                sumberAduan: {
+                  type: "string",
+                  enum: ["Pelanggan", "Non_Pelangan"],
+                  description: "Status pelapor (opsional, otomatis bernilai 'Pelanggan' jika noKontakPdam diisi, atau 'Non_Pelangan' jika kosong)",
+                  example: "Pelanggan"
+                },
+                saluranKeluhan: {
+                  type: "string",
+                  enum: ["WhatsApp", "Telepon", "Datang_Ketempat"],
+                  description: "Saluran pengaduan (opsional, default 'WhatsApp')",
+                  example: "Telepon"
                 }
               }
             },
@@ -1173,6 +1263,18 @@
                   type: "string",
                   description: "Koreksi alamat pelanggan",
                   example: "Jl. Veteran No. 12 RT. 05 RW. 02, Banjarmasin"
+                },
+                sumberAduan: {
+                  type: "string",
+                  enum: ["Pelanggan", "Non_Pelangan"],
+                  description: "Koreksi status sumber aduan (Pelanggan / Non_Pelangan)",
+                  example: "Pelanggan"
+                },
+                saluranKeluhan: {
+                  type: "string",
+                  enum: ["WhatsApp", "Telepon", "Datang_Ketempat"],
+                  description: "Koreksi saluran keluhan",
+                  example: "WhatsApp"
                 }
               }
             },

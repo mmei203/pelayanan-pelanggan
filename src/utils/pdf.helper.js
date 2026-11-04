@@ -133,7 +133,9 @@ export const generateFormulirAduanPelangganPDF = (pengaduan, stream) => {
 	doc.text("Tanggal Lapor", rightColX, sectionY);
 	doc.text(`:   ${tglFormatted}`, rightColX + 90, sectionY);
 
-	const isPelanggan = Boolean(pengaduan.pelanggan?.noKontakPdam);
+	const isPelanggan = pengaduan.sumberAduan
+		? pengaduan.sumberAduan === "Pelanggan"
+		: Boolean(pengaduan.pelanggan?.noKontakPdam);
 
 	doc.text("Status", rightColX, sectionY + 16);
 	doc.font(isPelanggan ? "Helvetica-BoldOblique" : "Helvetica-Oblique");

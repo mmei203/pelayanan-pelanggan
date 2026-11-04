@@ -12,21 +12,20 @@ model TabelPelanggan {
   namaPelanggan String           @map("NAMA_PELANGGAN") @db.VarChar(255)
   noHp          String           @map("NO_HP") @db.VarChar(20)
   alamat        String?          @map("ALAMAT") @db.Text
-  createdAt     DateTime?        @default(now()) @map("CREATED_AT") @db.Timestamp(0)
+  createdAt     DateTime         @default(now()) @map("CREATED_AT") @db.Timestamp(0)
   pengaduan     TabelPengaduan[]
 
-  @@index([noKontakPdam], map: "AK_IDENTIFIER_NO_KONTAK_PDAM")
   @@map("TABEL_PELANGGAN")
 }
 
 model TabelUser {
   idUser             String           @id @default(uuid()) @map("ID_USER") @db.VarChar(36)
   namaUser           String           @map("NAMA_USER") @db.VarChar(100)
-  email              String           @unique(map: "AK_IDENTIFIRE_EMAIL") @map("EMAIL") @db.VarChar(255)
-  username           String           @unique(map: "AK_IDENTIFIER_USERNAME") @map("USERNAME") @db.VarChar(255)
+  email              String           @unique @map("EMAIL") @db.VarChar(255)
+  username           String           @unique @map("USERNAME") @db.VarChar(255)
   password           String           @map("PASSWORD") @db.VarChar(255)
   role               TABEL_USER_ROLE  @map("ROLE")
-  createdAt          DateTime?        @default(now()) @map("CREATED_AT") @db.Timestamp(0)
+  createdAt          DateTime         @default(now()) @map("CREATED_AT") @db.Timestamp(0)
   pengaduanDitangani TabelPengaduan[] @relation("Menangani")
   pengaduanDiterima  TabelPengaduan[] @relation("Menerima")
 
@@ -36,8 +35,8 @@ model TabelUser {
 model TabelPengaduan {
   idPengaduan      String                          @id @default(uuid()) @map("ID_PENGADUAN") @db.VarChar(36)
   idPelanggan      String                          @map("ID_PELANGGAN") @db.VarChar(36)
-  idUserPenerima   String                          @map("ID_USER") @db.VarChar(36)
-  idUserPenanganan String?                         @map("TAB_ID_USER") @db.VarChar(36)
+  idUserPenerima   String                          @map("ID_USER_PENERIMA") @db.VarChar(36)
+  idUserPenanganan String?                         @map("ID_USER_PENANGANAN") @db.VarChar(36)
   keluhan          String                          @map("KELUHAN") @db.Text
   status           String                          @map("STATUS") @db.VarChar(20)
   latitude         String?                         @map("LATITUDE") @db.VarChar(50)
@@ -50,14 +49,15 @@ model TabelPengaduan {
   createdAt        DateTime                        @default(now()) @map("CREATED_AT") @db.Timestamp(0)
   updatedAt        DateTime?                       @updatedAt @map("UPDATED_AT") @db.Timestamp(0)
   saluranKeluhan   TABEL_PENGADUAN_SALURAN_KELUHAN @default(WhatsApp) @map("SALURAN_KELUHAN")
+  sumberAduan      TABEL_PENGADUAN_SUMBER_ADUAN    @default(Pelanggan) @map("SUMBER_ADUAN")
 
-  pelanggan        TabelPelanggan                  @relation(fields: [idPelanggan], references: [idPelanggan], onUpdate: Restrict, map: "FK_MEMILIKI")
-  penangani        TabelUser?                      @relation("Menangani", fields: [idUserPenanganan], references: [idUser], onUpdate: Restrict, map: "FK_MENANGANI")
-  penerima         TabelUser                       @relation("Menerima", fields: [idUserPenerima], references: [idUser], onUpdate: Restrict, map: "FK_MENERIMA")
+  pelanggan TabelPelanggan @relation(fields: [idPelanggan], references: [idPelanggan], map: "FK_MEMILIKI")
+  penangani TabelUser?     @relation("Menangani", fields: [idUserPenanganan], references: [idUser], map: "TABEL_PENGADUAN_ID_USER_PENANGANAN_fkey")
+  penerima  TabelUser      @relation("Menerima", fields: [idUserPenerima], references: [idUser], map: "TABEL_PENGADUAN_ID_USER_PENERIMA_fkey")
 
-  @@index([idPelanggan], map: "FK_MEMILIKI")
-  @@index([idUserPenanganan], map: "FK_MENANGANI")
-  @@index([idUserPenerima], map: "FK_MENERIMA")
+  @@index([idPelanggan], map: "TABEL_PENGADUAN_ID_PELANGGAN_fkey")
+  @@index([idUserPenanganan], map: "TABEL_PENGADUAN_ID_USER_PENANGANAN_fkey")
+  @@index([idUserPenerima], map: "TABEL_PENGADUAN_ID_USER_PENERIMA_fkey")
   @@map("TABEL_PENGADUAN")
 }
 
@@ -72,4 +72,9 @@ enum TABEL_PENGADUAN_SALURAN_KELUHAN {
   WhatsApp
   Telepon
   Datang_Ketempat @map("Datang Ketempat")
+}
+
+enum TABEL_PENGADUAN_SUMBER_ADUAN {
+  Pelanggan
+  Non_Pelangan @map("Non Pelangan")
 }

@@ -2,17 +2,45 @@ import { prisma } from "../config/db.js";
 import { formatFileUrl } from "../utils/url.helper.js";
 import { generateFormulirAduanPelangganPDF } from "../utils/pdf.helper.js";
 
+// Helper normalisasi ENUM sumberAduan
+const parseSumberAduan = (value) => {
+	if (!value) return undefined;
+	const val = String(value).trim().toLowerCase();
+	if (val === "non_pelangan" || val === "non pelangan" || val === "non_pelanggan" || val === "non pelanggan" || val === "non") {
+		return "Non_Pelangan";
+	}
+	if (val === "pelanggan") {
+		return "Pelanggan";
+	}
+	return undefined;
+};
+
+// Helper normalisasi ENUM saluranKeluhan
+const parseSaluranKeluhan = (value) => {
+	if (!value) return undefined;
+	const val = String(value).trim().toLowerCase();
+	if (val === "whatsapp" || val === "wa") return "WhatsApp";
+	if (val === "telepon" || val === "telp") return "Telepon";
+	if (val === "datang ketempat" || val === "datang_ketempat" || val === "datang langsung") return "Datang_Ketempat";
+	return undefined;
+};
+
 export const getAllPelanggan = async (req, res, next) => {
 	try {
-		const { search } = req.query;
+		const { search, sumberAduan, saluranKeluhan } = req.query;
 
-		const whereCondition = search
-			? {
-					pelanggan: {
-						namaPelanggan: { contains: search },
-					},
-				}
-			: {};
+		const parsedSumber = parseSumberAduan(sumberAduan);
+		const parsedSaluran = parseSaluranKeluhan(saluranKeluhan);
+
+		const whereCondition = {
+			...(search && {
+				pelanggan: {
+					namaPelanggan: { contains: search },
+				},
+			}),
+			...(parsedSumber && { sumberAduan: parsedSumber }),
+			...(parsedSaluran && { saluranKeluhan: parsedSaluran }),
+		};
 
 		const pengaduanList = await prisma.tabelPengaduan.findMany({
 			where: whereCondition,
@@ -38,10 +66,17 @@ export const getAllPelanggan = async (req, res, next) => {
 
 export const getPelangganByStatus = async (req, res, next) => {
 	try {
-		const { status } = req.query;
+		const { status, sumberAduan, saluranKeluhan } = req.query;
+
+		const parsedSumber = parseSumberAduan(sumberAduan);
+		const parsedSaluran = parseSaluranKeluhan(saluranKeluhan);
 
 		const pengaduanList = await prisma.tabelPengaduan.findMany({
-			where: status ? { status: status.toUpperCase() } : {},
+			where: {
+				...(status && { status: status.toUpperCase() }),
+				...(parsedSumber && { sumberAduan: parsedSumber }),
+				...(parsedSaluran && { saluranKeluhan: parsedSaluran }),
+			},
 			include: {
 				pelanggan: true,
 				penangani: { select: { namaUser: true } },
@@ -94,14 +129,31 @@ export const getPelangganById = async (req, res, next) => {
 
 export const createPelanggan = async (req, res, next) => {
 	try {
-		const { namaPelanggan, noHp, noKontakPdam, alamat, keluhan, idUserCS } =
-			req.body;
+		const {
+			namaPelanggan,
+			noHp,
+			noKontakPdam,
+			alamat,
+			keluhan,
+			idUserCS,
+			sumberAduan,
+			saluranKeluhan,
+		} = req.body;
 
 		if (!idUserCS) {
 			return res
 				.status(400)
 				.json({ success: false, message: "idUserCS wajib diisi" });
 		}
+
+		// Validasi / penentuan sumberAduan (Pelanggan / Non Pelangan)
+		// Jika frontend tidak mengirim, otomatis cek nomor kontrak PDAM
+		let resolvedSumberAduan = parseSumberAduan(sumberAduan);
+		if (!resolvedSumberAduan) {
+			resolvedSumberAduan = noKontakPdam && noKontakPdam.trim() !== "" ? "Pelanggan" : "Non_Pelangan";
+		}
+
+		const resolvedSaluranKeluhan = parseSaluranKeluhan(saluranKeluhan) || "WhatsApp";
 
 		const result = await prisma.$transaction(async (tx) => {
 			const pelangganBaru = await tx.tabelPelanggan.create({
@@ -115,6 +167,8 @@ export const createPelanggan = async (req, res, next) => {
 					keluhan,
 					status: "PENDING",
 					tanggalDiterima: new Date(),
+					sumberAduan: resolvedSumberAduan,
+					saluranKeluhan: resolvedSaluranKeluhan,
 				},
 			});
 
@@ -146,6 +200,8 @@ export const updatePelanggan = async (req, res, next) => {
 			noKontakPdam,
 			alamat,
 			keluhan,
+			sumberAduan,
+			saluranKeluhan,
 		} = req.body;
 
 		const pengaduanExist = await prisma.tabelPengaduan.findUnique({
@@ -160,17 +216,24 @@ export const updatePelanggan = async (req, res, next) => {
 		}
 
 		// 1. Update Data Pelanggan (Bisa dilakukan kapan saja tanpa terikat status)
-		if (namaPelanggan || noHp || noKontakPdam || alamat) {
+		if (namaPelanggan || noHp || noKontakPdam !== undefined || alamat) {
 			await prisma.tabelPelanggan.update({
 				where: { idPelanggan: pengaduanExist.idPelanggan },
 				data: {
 					...(namaPelanggan && { namaPelanggan }),
 					...(noHp && { noHp }),
-					...(noKontakPdam && { noKontakPdam }),
+					...(noKontakPdam !== undefined && { noKontakPdam }),
 					...(alamat && { alamat }),
 				},
 			});
 		}
+
+		// Siapkan payload opsional untuk pengaduan
+		const extraPengaduanFields = {};
+		const parsedSumber = parseSumberAduan(sumberAduan);
+		if (parsedSumber) extraPengaduanFields.sumberAduan = parsedSumber;
+		const parsedSaluran = parseSaluranKeluhan(saluranKeluhan);
+		if (parsedSaluran) extraPengaduanFields.saluranKeluhan = parsedSaluran;
 
 		// 2. Handle Update Berdasarkan Status (Jika status dikirimkan)
 		if (rawStatus === "ON PROGRESS") {
@@ -181,8 +244,13 @@ export const updatePelanggan = async (req, res, next) => {
 					...(operatorId && { idUserPenanganan: operatorId }),
 					...(keluhan && { keluhan }),
 					tanggalDiproses: new Date(),
+					...extraPengaduanFields,
 				},
-				include: { pelanggan: true },
+				include: {
+					pelanggan: true,
+					penerima: { select: { namaUser: true, role: true } },
+					penangani: { select: { namaUser: true, role: true } },
+				},
 			});
 
 			const formattedData = {
@@ -215,8 +283,13 @@ export const updatePelanggan = async (req, res, next) => {
 					...(keluhan && { keluhan }),
 					...(operatorId && { idUserPenanganan: operatorId }),
 					tanggalSelesai: new Date(),
+					...extraPengaduanFields,
 				},
-				include: { pelanggan: true },
+				include: {
+					pelanggan: true,
+					penerima: { select: { namaUser: true, role: true } },
+					penangani: { select: { namaUser: true, role: true } },
+				},
 			});
 
 			const formattedData = {
@@ -233,14 +306,18 @@ export const updatePelanggan = async (req, res, next) => {
 		}
 
 		// 3. Jika status kosong atau hanya ingin mengedit data teks (misal: ubah nama, alamat, keluhan tanpa mengubah status)
-		const updateDataPayload = {};
+		const updateDataPayload = { ...extraPengaduanFields };
 		if (keluhan) updateDataPayload.keluhan = keluhan;
 		if (operatorId) updateDataPayload.idUserPenanganan = operatorId;
 
 		const updated = await prisma.tabelPengaduan.update({
 			where: { idPengaduan: id },
 			data: updateDataPayload,
-			include: { pelanggan: true },
+			include: {
+				pelanggan: true,
+				penerima: { select: { namaUser: true, role: true } },
+				penangani: { select: { namaUser: true, role: true } },
+			},
 		});
 
 		const formattedData = {
@@ -261,7 +338,10 @@ export const updatePelanggan = async (req, res, next) => {
 
 export const getHistory = async (req, res, next) => {
 	try {
-		const { search } = req.query;
+		const { search, sumberAduan, saluranKeluhan } = req.query;
+
+		const parsedSumber = parseSumberAduan(sumberAduan);
+		const parsedSaluran = parseSaluranKeluhan(saluranKeluhan);
 
 		const history = await prisma.tabelPengaduan.findMany({
 			where: {
@@ -271,6 +351,8 @@ export const getHistory = async (req, res, next) => {
 						namaPelanggan: { contains: search },
 					},
 				}),
+				...(parsedSumber && { sumberAduan: parsedSumber }),
+				...(parsedSaluran && { saluranKeluhan: parsedSaluran }),
 			},
 			include: {
 				pelanggan: true,
