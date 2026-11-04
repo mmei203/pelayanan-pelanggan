@@ -1,5 +1,6 @@
 import { prisma } from "../config/db.js";
 import { formatFileUrl } from "../utils/url.helper.js";
+import { generateFormulirAduanPelangganPDF } from "../utils/pdf.helper.js";
 
 export const getAllPelanggan = async (req, res, next) => {
 	try {
@@ -286,6 +287,37 @@ export const getHistory = async (req, res, next) => {
 		}));
 
 		res.status(200).json({ success: true, data: formattedData });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const printPengaduan = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+
+		const pengaduan = await prisma.tabelPengaduan.findUnique({
+			where: { idPengaduan: id },
+			include: {
+				pelanggan: true,
+				penerima: { select: { namaUser: true, role: true } },
+				penangani: { select: { namaUser: true, role: true } },
+			},
+		});
+
+		if (!pengaduan) {
+			return res
+				.status(404)
+				.json({ success: false, message: "Data pengaduan tidak ditemukan" });
+		}
+
+		res.setHeader("Content-Type", "application/pdf");
+		res.setHeader(
+			"Content-Disposition",
+			`inline; filename="formulir-aduan-${id}.pdf"`
+		);
+
+		generateFormulirAduanPelangganPDF(pengaduan, res);
 	} catch (error) {
 		next(error);
 	}

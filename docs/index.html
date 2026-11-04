@@ -14,7 +14,6 @@
       --primary-dark: #0369a1;
       --primary-light: #e0f2fe;
       --bg: #f8fafc;
-      --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border: #e2e8f0;
@@ -540,6 +539,59 @@
                 },
                 500: {
                   description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+
+          "/pelanggan/{id}/print": {
+            get: {
+              tags: ["Pelanggan & Pengaduan"],
+              summary: "Cetak Formulir Aduan Pelanggan (PDF)",
+              description: "Menghasilkan berkas PDF Formulir Aduan Pelanggan resmi PERUMDA PALD sesuai format fisik. Berkas dapat langsung dibuka di browser / dipratinjau dan dicetak langsung.",
+              parameters: [
+                {
+                  name: "id",
+                  in: "path",
+                  description: "UUID dari Pengaduan (`idPengaduan`) yang ingin dicetak",
+                  required: true,
+                  schema: {
+                    type: "string",
+                    example: "0788647a-c3cb-4560-848f-ef12c6a0846d"
+                  }
+                }
+              ],
+              responses: {
+                200: {
+                  description: "Berkas formulir aduan pelanggan dalam format PDF",
+                  content: {
+                    "application/pdf": {
+                      schema: {
+                        type: "string",
+                        format: "binary"
+                      }
+                    }
+                  }
+                },
+                404: {
+                  description: "Data pengaduan tidak ditemukan",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" },
+                      example: {
+                        success: false,
+                        message: "Data pengaduan tidak ditemukan"
+                      }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server saat membuat dokumen PDF",
                   content: {
                     "application/json": {
                       schema: { $ref: "#/components/schemas/ErrorResponse" }
