@@ -45,3 +45,47 @@ export const createUser = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const updateUser = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+		const { namaUser, email, username, password, role } = req.body;
+
+		const userExist = await prisma.tabelUser.findUnique({
+			where: { idUser: id },
+		});
+
+		if (!userExist) {
+			return res
+				.status(404)
+				.json({ success: false, message: "User tidak ditemukan" });
+		}
+
+		const updatedUser = await prisma.tabelUser.update({
+			where: { idUser: id },
+			data: {
+				...(namaUser && { namaUser }),
+				...(email && { email }),
+				...(username && { username }),
+				...(password && { password }),
+				...(role && { role }),
+			},
+			select: {
+				idUser: true,
+				namaUser: true,
+				email: true,
+				username: true,
+				role: true,
+				createdAt: true,
+			},
+		});
+
+		res.status(200).json({
+			success: true,
+			message: "User berhasil diperbarui",
+			data: updatedUser,
+		});
+	} catch (error) {
+		next(error);
+	}
+};

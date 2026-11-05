@@ -381,6 +381,68 @@
             }
           },
 
+          "/users/{id}": {
+            put: {
+              tags: ["Users"],
+              summary: "Memperbarui data user",
+              description: "Mengubah data user internal (namaUser, email, username, password, atau role) berdasarkan UUID idUser.",
+              parameters: [
+                {
+                  name: "id",
+                  in: "path",
+                  description: "UUID dari User (`idUser`) yang ingin diperbarui",
+                  required: true,
+                  schema: {
+                    type: "string",
+                    example: "3c90a1b2-4d5e-6f7a-8b9c-0d1e2f3a4b5c"
+                  }
+                }
+              ],
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      $ref: "#/components/schemas/UpdateUserRequest"
+                    }
+                  }
+                }
+              },
+              responses: {
+                200: {
+                  description: "User berhasil diperbarui",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/UpdateUserSuccessResponse"
+                      }
+                    }
+                  }
+                },
+                404: {
+                  description: "User tidak ditemukan",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" },
+                      example: {
+                        success: false,
+                        message: "User tidak ditemukan"
+                      }
+                    }
+                  }
+                },
+                500: {
+                  description: "Kesalahan internal server",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ErrorResponse" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+
           "/pelanggan": {
             get: {
               tags: ["Pelanggan & Pengaduan"],
@@ -942,6 +1004,51 @@
                 message: {
                   type: "string",
                   example: "User berhasil dibuat"
+                },
+                data: {
+                  $ref: "#/components/schemas/UserData"
+                }
+              }
+            },
+
+            UpdateUserRequest: {
+              type: "object",
+              properties: {
+                namaUser: {
+                  type: "string",
+                  example: "Ahmad Operator 1 (Updated)"
+                },
+                email: {
+                  type: "string",
+                  format: "email",
+                  example: "ahmad.baru@pald.co.id"
+                },
+                username: {
+                  type: "string",
+                  example: "ahmad_op_baru"
+                },
+                password: {
+                  type: "string",
+                  format: "password",
+                  example: "PasswordBaru#2026"
+                },
+                role: {
+                  $ref: "#/components/schemas/UserRole",
+                  example: "Operator"
+                }
+              }
+            },
+
+            UpdateUserSuccessResponse: {
+              type: "object",
+              properties: {
+                success: {
+                  type: "boolean",
+                  example: true
+                },
+                message: {
+                  type: "string",
+                  example: "User berhasil diperbarui"
                 },
                 data: {
                   $ref: "#/components/schemas/UserData"
