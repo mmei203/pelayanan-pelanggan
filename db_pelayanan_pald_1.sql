@@ -46,7 +46,7 @@ create table TABEL_PENGADUAN
    CREATED_AT           timestamp not null,
    UPDATED_AT           timestamp,
    SALURAN_KELUHAN      ENUM('WhatsApp', 'Telepon', 'Datang Ketempat') not null,
-   SUMBER_ADUAN         ENUM('Pelanggan', 'Non Pelangan') not null,
+   SUMBER_ADUAN         ENUM('Pelanggan', 'Non Pelanggan') not null,
    primary key (ID_PENGADUAN)
 );
 
