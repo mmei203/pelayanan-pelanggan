@@ -1,4 +1,11 @@
 import PDFDocument from "pdfkit";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const logoPath = path.resolve(__dirname, "../assets/logo-pald.png");
 
 /**
  * Generate PDF Formulir Aduan Pelanggan (PERUMDA PALD BANJARMASIN)
@@ -18,63 +25,73 @@ export const generateFormulirAduanPelangganPDF = (pengaduan, stream) => {
 	const contentWidth = right - left;
 
 	// ==================== KOP SURAT ====================
-	// Logo placeholder / icon box jika logo belum ada
-	const logoWidth = 65;
-	const logoHeight = 65;
-	const topMargin = 36;
+	const logoWidth = 100;
+	const logoHeight = 100;
+	const topMargin = 30;
 
-	doc.lineWidth(1).strokeColor("#000000");
-	doc.rect(left, topMargin, logoWidth, logoHeight).stroke();
-	
-	doc.fontSize(7).font("Helvetica-Bold");
-	doc.text("PERUMDA PALD\nBANJARMASIN", left, topMargin + 22, {
-		width: logoWidth,
-		align: "center",
-	});
+	// Render Logo di sisi kiri
+	if (fs.existsSync(logoPath)) {
+		doc.image(logoPath, left, topMargin, {
+			fit: [logoWidth, logoHeight],
+			align: "center",
+			valign: "center",
+		});
+	} else {
+		doc.lineWidth(1).strokeColor("#000000");
+		doc.rect(left, topMargin, logoWidth, logoHeight).stroke();
+		
+		doc.fontSize(7).font("Helvetica-Bold");
+		doc.text("PERUMDA PALD\nBANJARMASIN", left, topMargin + 30, {
+			width: logoWidth,
+			align: "center",
+		});
+	}
 
-	// Header Text
-	const headerLeft = left + logoWidth + 15;
+	// Header Text (Teks instansi di sebelah kanan logo)
+	const headerLeft = left + logoWidth + 10;
 	const headerWidth = right - headerLeft;
 
-	doc.fontSize(12).font("Helvetica-Bold");
-	doc.text("PEMERINTAH KOTA BANJARMASIN", headerLeft, topMargin - 2, {
-		width: headerWidth,
-		align: "center",
-	});
-
-	doc.fontSize(11).font("Helvetica-Bold");
-	doc.text("PERUSAHAAN UMUM DAERAH", headerLeft, doc.y + 1, {
-		width: headerWidth,
-		align: "center",
-	});
-
-	doc.fontSize(11).font("Helvetica-Bold");
-	doc.text("PENGELOLA AIR LIMBAH DOMESTIK BANJARMASIN", headerLeft, doc.y + 1, {
+	doc.fontSize(13).font("Helvetica-Bold");
+	doc.text("PEMERINTAH KOTA BANJARMASIN", headerLeft, topMargin + 4, {
 		width: headerWidth,
 		align: "center",
 	});
 
 	doc.fontSize(12).font("Helvetica-Bold");
-	doc.text("( PERUMDA PALD )", headerLeft, doc.y + 1, {
+	doc.text("PERUSAHAAN UMUM DAERAH", headerLeft, doc.y + 2, {
 		width: headerWidth,
 		align: "center",
 	});
 
-	doc.fontSize(8).font("Helvetica");
+	doc.fontSize(11).font("Helvetica-Bold");
+	doc.text("PENGELOLA AIR LIMBAH DOMESTIK BANJARMASIN", headerLeft, doc.y + 2, {
+		width: headerWidth,
+		align: "center",
+	});
+
+	doc.fontSize(12).font("Helvetica-Bold");
+	doc.text("( PERUMDA PALD )", headerLeft, doc.y + 2, {
+		width: headerWidth,
+		align: "center",
+	});
+
+	// Alamat & Kontak di bawah blok instansi
+	doc.fontSize(7.8).font("Helvetica");
 	doc.text(
-		"Jl. Pasar Pagi No. 89 RT. 01 Telp. (0511) 3271940 Fax. (0511) 3252883 Banjarmasin 70241\nwebsite: www.perumdapaldbanjarmasin.com  e-mail : perumdapaldbanjarmasin@gmail.com",
-		left,
-		topMargin + logoHeight + 6,
+		"Jl. Pasar Pagi No. 89 RT. 01 Telp. (0511) 3271940 Fax. (0511) 3252883 Banjarmasin 70241\nwebsite: www.perumdapaldbanjarmasin.com   e-mail : perumdapaldbanjarmasin@gmail.com",
+		headerLeft,
+		doc.y + 6,
 		{
-			width: contentWidth,
+			width: headerWidth,
 			align: "center",
+			lineGap: 1.5,
 		}
 	);
 
-	// Garis pembatas kop ganda
-	const lineY1 = topMargin + logoHeight + 32;
-	doc.lineWidth(1.5).moveTo(left, lineY1).lineTo(right, lineY1).stroke();
-	doc.lineWidth(0.5).moveTo(left, lineY1 + 3).lineTo(right, lineY1 + 3).stroke();
+	// Garis pembatas kop ganda (tebal + tipis di bawah area kop)
+	const lineY1 = topMargin + logoHeight + 8;
+	doc.lineWidth(1.8).moveTo(left, lineY1).lineTo(right, lineY1).stroke();
+	doc.lineWidth(0.6).moveTo(left, lineY1 + 3).lineTo(right, lineY1 + 3).stroke();
 
 	// ==================== JUDUL & NO ====================
 	const titleY = lineY1 + 10;
