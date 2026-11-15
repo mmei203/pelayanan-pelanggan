@@ -2,8 +2,9 @@
 import layout from './layout.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { ChevronLeft } from 'lucide-vue-next'
+import { ChevronLeft, Printer } from 'lucide-vue-next'
 import superServices from '@/services/superServices.js'
+import logoPald from '@/assets/logo.png'
 
 const route = useRoute()
 const idPengaduan = route.params.id
@@ -38,7 +39,28 @@ const fotoPreview = ref('')
 const documentInput = ref(null)
 const photoInput = ref(null)
 
-// Computed Safety Helpers (Tanpa menggunakan operator `?.`)
+// Fungsi Cetak / Print Menggunakan Service superServices
+const handlePrint = async () => {
+  if (!idPengaduan) {
+    showToast('ID Pengaduan tidak ditemukan.', 'error')
+    return
+  }
+
+  try {
+    // Memanggil method print(id) dari superServices.js
+    const response = await superServices.print(idPengaduan)
+    
+    // Memproses blob data PDF dari server
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const fileURL = URL.createObjectURL(blob)
+    window.open(fileURL, '_blank')
+  } catch (error) {
+    console.error('Gagal mencetak dokumen:', error)
+    showToast('Gagal mengunduh formulir cetak.', 'error')
+  }
+}
+
+// Computed Safety Helpers
 const statusText = computed(() => {
   return detailPelanggan.value && detailPelanggan.value.status 
     ? detailPelanggan.value.status.toUpperCase() 
@@ -69,9 +91,44 @@ const noHpPelangganText = computed(() => {
     : '-'
 })
 
+// Helper Teks & Mapping Saluran Keluhan Backend -> Display Teks
+const saluranKeluhanRaw = computed(() => {
+  return detailPelanggan.value && detailPelanggan.value.saluranKeluhan
+    ? detailPelanggan.value.saluranKeluhan
+    : ''
+})
+
+const saluranKeluhanText = computed(() => {
+  const val = saluranKeluhanRaw.value
+  if (val === 'Datang_Ketempat' || val.toLowerCase().includes('datang')) return 'Datang Langsung'
+  if (val === 'Telepon' || val.toLowerCase().includes('telepon') || val.toLowerCase().includes('telp')) return 'Via Telepon'
+  if (val === 'Whatsapp' || val.toLowerCase().includes('whatsapp') || val.toLowerCase().includes('temuan') || val.toLowerCase().includes('lapangan')) return 'Temuan Lapangan'
+  return val || '-'
+})
+
+// Helper Teks & Mapping Sumber Aduan Backend -> Display Teks
+const sumberAduanRaw = computed(() => {
+  return detailPelanggan.value && detailPelanggan.value.sumberAduan
+    ? detailPelanggan.value.sumberAduan
+    : ''
+})
+
+const sumberAduanText = computed(() => {
+  const val = sumberAduanRaw.value
+  if (val === 'Non_Pelanggan' || val.toLowerCase().includes('non')) return 'Non Pelanggan'
+  if (val === 'Pelanggan' || val.toLowerCase().includes('pelanggan')) return 'Pelanggan'
+  return val || '-'
+})
+
 const namaOperatorText = computed(() => {
   return detailPelanggan.value && detailPelanggan.value.penangani && detailPelanggan.value.penangani.namaUser
     ? detailPelanggan.value.penangani.namaUser
+    : '-'
+})
+
+const PenerimaText = computed(() => {
+  return detailPelanggan.value && detailPelanggan.value.penerima && detailPelanggan.value.penerima.namaUser
+    ? detailPelanggan.value.penerima.namaUser
     : '-'
 })
 
@@ -88,7 +145,6 @@ const fetchDetail = async () => {
   isLoading.value = true
   apiError.value = ''
   try {
-    // Memanggil detail(id) sesuai dengan method di superServices.js
     const response = await superServices.detail(idPengaduan)
     const data = (response.data && response.data.data) ? response.data.data : response.data
     detailPelanggan.value = data
@@ -278,14 +334,14 @@ const handlePhotoChange = (event) => {
             'bg-red-600 text-white': toast.type === 'error',
             'bg-amber-500 text-white': toast.type === 'warning'
           }"
-          class="fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg text-xs font-medium flex items-center gap-2 border border-white/20"
+          class="no-print fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg text-xs font-medium flex items-center gap-2 border border-white/20"
         >
           <span>{{ toast.message }}</span>
         </div>
       </transition>
 
       <!-- Header & Breadcrumb -->
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between no-print">
         <div>
           <!-- Breadcrumb -->
           <nav class="hidden md:flex text-xs font-normal gap-1 mb-1 items-center">
@@ -306,20 +362,30 @@ const handlePhotoChange = (event) => {
             </h1>
           </div>
         </div>
+
+        <!-- Tombol Print di Pojok Kanan Atas -->
+        <button 
+          @click="handlePrint"
+          type="button"
+          class="bg-app-primary hover:opacity-90 text-white text-xs md:text-sm font-semibold px-3 py-2 md:px-4 md:py-2.5 rounded-xl shadow-xs transition flex items-center gap-2"
+        >
+          <Printer class="w-4 h-4 stroke-[2]" />
+          <span>Cetak</span>
+        </button>
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="py-12 text-center font-normal">
+      <div v-if="isLoading" class="py-12 text-center font-normal no-print">
         Memuat detail pelanggan...
       </div>
 
       <!-- Error State -->
-      <div v-else-if="apiError" class="py-12 text-center text-red-500">
+      <div v-else-if="apiError" class="py-12 text-center text-red-500 no-print">
         {{ apiError }}
       </div>
 
-      <!-- Detail Content Grid -->
-      <div v-else-if="detailPelanggan" class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 pt-2">
+      <!-- Detail Content Grid (Tampilan Web Biasa) -->
+      <div v-else-if="detailPelanggan" class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 pt-2 no-print">
         
         <!-- Sisi Kiri: Pelanggan & Proses -->
         <div class="space-y-6 md:space-y-8">
@@ -331,6 +397,14 @@ const handlePhotoChange = (event) => {
             </h2>
 
             <div class="space-y-2.5 md:space-y-3 text-xs">
+              <div class="grid grid-cols-3 gap-2 items-start">
+                <span class="font-semibold text-app-secondary">Saluran Keluhan</span>
+                <span class="col-span-2 font-light">{{ saluranKeluhanText }}</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 items-start">
+                <span class="font-semibold text-app-secondary">Sumber Aduan</span>
+                <span class="col-span-2 font-light">{{ sumberAduanText }}</span>
+              </div>
               <div class="grid grid-cols-3 gap-2 items-start">
                 <span class="font-semibold text-app-secondary">Nama</span>
                 <span class="col-span-2 font-light ">{{ namaPelangganText }}</span>
@@ -506,6 +580,136 @@ const handlePhotoChange = (event) => {
 
       </div>
 
+      <!-- =================================================================== -->
+      <!-- TEMPLATE FORMULIR RESMI KHUSUS PRINT (MUNCUL SAAT CETAK / PRINT)   -->
+      <!-- =================================================================== -->
+      <div v-if="detailPelanggan" class="print-only font-serif text-black p-4 text-xs">
+        
+        <!-- KOP SURAT PERUMDA PALD -->
+        <div class="border-b-2 border-black pb-2 mb-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <img :src="logoPald" alt="Logo PERUMDA PALD" class="w-16 h-auto" />
+            <div>
+              <h2 class="font-bold text-sm tracking-wide uppercase">PEMERINTAH KOTA BANJARMASIN</h2>
+              <h3 class="font-bold text-xs uppercase">PERUSAHAAN UMUM DAERAH</h3>
+              <h1 class="font-bold text-sm tracking-wider uppercase">PENGELOLA AIR LIMBAH DOMESTIK BANJARMASIN</h1>
+              <h1 class="font-bold text-sm tracking-wider uppercase">( PERUMDA PALD )</h1>
+              <p class="text-[10px] leading-tight">
+                Jl. Pasar Pagi No. 89 RT. 01 Telp. (0511) 3271940 Fax. (0511) 3252883 Banjarmasin 70241<br/>
+                website: www.perumdapaldbanjarmasin.com e-mail: perumdapaldbanjarmasin@gmail.com
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- JUDUL FORMULIR -->
+        <div class="text-center my-3">
+          <h2 class="font-bold text-sm underline tracking-wide uppercase">FORMULIR ADUAN PELANGGAN</h2>
+        </div>
+
+        <!-- NOMOR & TANGGAL LAPORAN -->
+        <div class="flex justify-between items-start mb-3 border p-2 border-black">
+          <div>
+            <p><strong>Tanggal Lapor:</strong> {{ formatTanggal(detailPelanggan.tanggalDiterima || detailPelanggan.createdAt) }}</p>
+            <p><strong>Status Pengaduan:</strong> {{ statusText }}</p>
+          </div>
+          <div class="text-right">
+            <p><strong>No. Pengaduan:</strong> {{ detailPelanggan.idPengaduan ? detailPelanggan.idPengaduan.substring(0, 8).toUpperCase() : '-' }}</p>
+          </div>
+        </div>
+
+        <!-- SALURAN KELUHAN (KIRI) DAN SUMBER ADUAN (KANAN) SEJAJAR -->
+        <div class="mb-4 grid grid-cols-2 gap-4 border p-2 border-black">
+          
+          <!-- SALURAN KELUHAN (SEBELAH KIRI) -->
+          <div>
+            <p class="font-bold mb-1">Saluran Keluhan:</p>
+            <div class="flex flex-wrap gap-3 pl-1">
+              <span class="flex items-center gap-1">
+                <span class="inline-block w-3 h-3 border border-black text-center leading-none text-[9px] font-bold">
+                  {{ saluranKeluhanRaw === 'Datang_Ketempat' || saluranKeluhanRaw.toLowerCase().includes('datang') ? '✓' : '' }}
+                </span> Datang Langsung
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="inline-block w-3 h-3 border border-black text-center leading-none text-[9px] font-bold">
+                  {{ saluranKeluhanRaw === 'Telepon' || saluranKeluhanRaw.toLowerCase().includes('telepon') || saluranKeluhanRaw.toLowerCase().includes('telp') ? '✓' : '' }}
+                </span> Via Telepon
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="inline-block w-3 h-3 border border-black text-center leading-none text-[9px] font-bold">
+                  {{ saluranKeluhanRaw === 'Whatsapp' || saluranKeluhanRaw.toLowerCase().includes('whatsapp') || saluranKeluhanRaw.toLowerCase().includes('temuan') || saluranKeluhanRaw.toLowerCase().includes('lapangan') ? '✓' : '' }}
+                </span> Temuan Lapangan
+              </span>
+            </div>
+          </div>
+
+          <!-- SUMBER ADUAN (SEBELAH KANAN) -->
+          <div>
+            <p class="font-bold mb-1">Sumber Aduan:</p>
+            <div class="flex flex-wrap gap-3 pl-1">
+              <span class="flex items-center gap-1">
+                <span class="inline-block w-3 h-3 border border-black text-center leading-none text-[9px] font-bold">
+                  {{ sumberAduanRaw === 'Pelanggan' || (!sumberAduanRaw.toLowerCase().includes('non') && sumberAduanRaw.toLowerCase().includes('pelanggan')) ? '✓' : '' }}
+                </span> Pelanggan Kerjasama
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="inline-block w-3 h-3 border border-black text-center leading-none text-[9px] font-bold">
+                  {{ sumberAduanRaw === 'Non_Pelanggan' || sumberAduanRaw.toLowerCase().includes('non') ? '✓' : '' }}
+                </span> Non-Pelanggan Kerjasama
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- DATA PELANGGAN (TABEL FORM) -->
+        <div class="space-y-1.5 mb-4">
+          <div class="flex">
+            <span class="w-40 font-bold">Nama Pelapor</span>
+            <span class="w-4 text-center">:</span>
+            <span class="flex-1 border-b border-black border-dotted pb-0.5">{{ namaPelangganText }}</span>
+          </div>
+          <div class="flex">
+            <span class="w-40 font-bold">Alamat</span>
+            <span class="w-4 text-center">:</span>
+            <span class="flex-1 border-b border-black border-dotted pb-0.5">{{ alamatPelangganText }}</span>
+          </div>
+          <div class="flex">
+            <span class="w-40 font-bold">Nomor Telpon / HP</span>
+            <span class="w-4 text-center">:</span>
+            <span class="flex-1 border-b border-black border-dotted pb-0.5">{{ noHpPelangganText }}</span>
+          </div>
+          <div class="flex">
+            <span class="w-40 font-bold">Kontrak PDAM</span>
+            <span class="w-4 text-center">:</span>
+            <span class="flex-1 border-b border-black border-dotted pb-0.5">NO. {{ noKontakPdamText }}</span>
+          </div>
+          <div class="flex">
+            <span class="w-40 font-bold">Uraian Keluhan</span>
+            <span class="w-4 text-center">:</span>
+            <span class="flex-1 border-b border-black border-dotted pb-0.5">{{ detailPelanggan.keluhan || '-' }}</span>
+          </div>
+          <div class="flex" v-if="longitude || latitude">
+            <span class="w-40 font-bold">Titik Koordinat</span>
+            <span class="w-4 text-center">:</span>
+            <span class="flex-1 border-b border-black border-dotted pb-0.5">Long: {{ longitude || '-' }}, Lat: {{ latitude || '-' }}</span>
+          </div>
+        </div>
+
+        <!-- TANDA TANGAN (PEMOHON & PENERIMA ADUAN) -->
+        <div class="mt-12 flex justify-between text-center px-8">
+          <div class="w-48">
+            <p class="mb-16">Pemohon,</p>
+            <p class="font-bold border-b border-black pb-0.5">( {{ namaPelangganText }} )</p>
+          </div>
+          <div class="w-48">
+            <p class="mb-16">Penerima Aduan,</p>
+            <p class="font-bold border-b border-black pb-0.5">( {{ PenerimaText }} )</p>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   </layout>
 </template>
@@ -518,5 +722,32 @@ const handlePhotoChange = (event) => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Menyembunyikan template cetak pada layar biasa */
+.print-only {
+  display: none;
+}
+
+@media print {
+  /* Sembunyikan elemen web biasa saat mencetak */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Sembunyikan Layout bawaan (Header/Sidebar) jika ada */
+  header, sidebar, nav, aside { 
+    display: none !important;
+  }
+
+  /* Tampilkan hanya formulir resmi saat mencetak */
+  .print-only {
+    display: block !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
 }
 </style>

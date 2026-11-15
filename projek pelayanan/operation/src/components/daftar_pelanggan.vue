@@ -1,13 +1,14 @@
 <script setup>
 import layout from './layout.vue'
 import { ref, computed, onMounted } from 'vue'
-import { ChevronLeft, Search, Info, Filter } from 'lucide-vue-next'
+import { ChevronLeft, Search, Info, Filter, Calendar, X } from 'lucide-vue-next'
 import pelangganServices from '@/services/operationServices.js'
 
 const isLoading = ref(false)
 const apiError = ref('')
 const searchQuery = ref('')
 const selectedFilter = ref('All')
+const selectedDate = ref('')
 const pelangganList = ref([])
 
 // Fetch data menggunakan service pelangganServices.getAll()
@@ -31,7 +32,18 @@ onMounted(() => {
   fetchPelanggan()
 })
 
-// Logic Search & Filter Status
+// Helper format tanggal ke YYYY-MM-DD untuk pencocokan input date
+const toIsoDateString = (dataString) => {
+  if (!dataString) return ''
+  const date = new Date(dataString)
+  if (isNaN(date.getTime())) return ''
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// Logic Search, Filter Status & Filter Tanggal
 const filterPelanggan = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()
 
@@ -52,7 +64,11 @@ const filterPelanggan = computed(() => {
       }
     }
 
-    return matchSearch && matchStatus
+    // Date Filter
+    const itemDate = toIsoDateString(item.updatedAt || item.createdAt)
+    const matchDate = !selectedDate.value || itemDate === selectedDate.value
+
+    return matchSearch && matchStatus && matchDate
   })
 })
 
@@ -120,8 +136,25 @@ const formatStatus = (status) => {
             <Search class="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-700 md:text-gray-400"/>
           </div>
 
-          <!-- Filter Status Dropdown (Tampil di Laptop) -->
-          <div class="hidden md:block shrink-0">
+          <!-- Filter Kalender & Status (Tampil di Laptop) -->
+          <div class="hidden md:flex items-center gap-2 shrink-0">
+            <div class="flex items-center relative">
+              <input 
+                v-model="selectedDate"
+                type="date"
+                class="bg-white text-xs md:text-sm font-normal px-3.5 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:border-app-primary cursor-pointer shadow-xs"
+              />
+              <button 
+                v-if="selectedDate" 
+                type="button" 
+                @click="selectedDate = ''" 
+                title="Reset tanggal"
+                class="ml-1.5 text-gray-400 hover:text-gray-700 transition"
+              >
+                <X class="w-4 h-4" />
+              </button>
+            </div>
+
             <select 
               v-model="selectedFilter"
               class="bg-white text-xs md:text-sm font-normal px-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:border-app-primary cursor-pointer shadow-xs"
@@ -133,8 +166,20 @@ const formatStatus = (status) => {
             </select>
           </div>
 
-          <!-- Icon Filter Khusus Mobile -->
-          <div class="flex md:hidden items-center shrink-0">
+          <!-- Icon Filter Kalender & Status Khusus Mobile -->
+          <div class="flex md:hidden items-center gap-1 shrink-0">
+            <div class="relative">
+              <input 
+                v-model="selectedDate"
+                type="date"
+                @click="$event.target.showPicker && $event.target.showPicker()"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              />
+              <button type="button" :class="selectedDate ? 'text-app-primary bg-blue-50' : 'text-gray-700 hover:bg-gray-200'" class="p-1.5 rounded-lg transition">
+                <Calendar class="w-5 h-5 stroke-[2]" />
+              </button>
+            </div>
+
             <div class="relative">
               <select 
                 v-model="selectedFilter"

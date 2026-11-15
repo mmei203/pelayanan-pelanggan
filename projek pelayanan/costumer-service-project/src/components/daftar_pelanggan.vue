@@ -1,9 +1,12 @@
 <script setup>
 import layout from './layout.vue'
 import { ref, computed, onMounted } from 'vue'
-import { ChevronLeft, Search, Plus, SquarePen, Info, ChevronDown, X, Filter } from 'lucide-vue-next'
+import { ChevronLeft, Search, Plus, SquarePen, Info, ChevronDown, X, Filter, Calendar } from 'lucide-vue-next'
 import router from '@/router/index.js'
 import pelangganServices from '@/services/pelangganServices.js'
+
+// helper pendeteksi layar mobile (< 768px)
+const isMobile = () => window.innerWidth < 768
 
 // state tambah dan edit pelanggan
 const isModalOpen = ref(false)
@@ -43,12 +46,21 @@ const form = ref({
     noTelp: '',
     noPdam: '',
     alamat: '',
+    saluranKeluhan: '',
+    sumberAduan: '',
     keluhan: '',
     status: 'PENDING'
 })
 
 // tambah
 const addModal = () => {
+    // Jika tampilan Mobile, pindah ke Halaman Tambah Pelanggan Baru
+    if (isMobile()) {
+        router.push('/tambah_pelanggan')
+        return
+    }
+
+    // Jika Laptop, gunakan Popup Modal
     errorMessage.value = ''
     modalMode.value = 'add'
     modalTitle.value = 'Tambah Pelanggan'
@@ -59,6 +71,8 @@ const addModal = () => {
         noTelp: '', 
         noPdam: '', 
         alamat: '', 
+        saluranKeluhan: '',
+        sumberAduan: '',
         keluhan: '', 
         status: 'PENDING' 
     }
@@ -67,10 +81,37 @@ const addModal = () => {
 
 // edit
 const editModal = (item) => {
+    // Jika tampilan Mobile, pindah ke Halaman Edit Pelanggan Baru
+    if (isMobile()) {
+        router.push(`/edit_pelanggan/${item.idPengaduan}`)
+        return
+    }
+
+    // Jika Laptop, gunakan Popup Modal
     errorMessage.value = ''
     modalMode.value = 'edit'
     modalTitle.value = 'Edit Pelanggan'
     
+    // 1. Safe Mapping Saluran Keluhan (Mendukung enum backend & penulisan teks UI)
+    const rawSaluran = String(item.saluranKeluhan || '').toLowerCase().trim()
+    let mappedSaluran = ''
+    if (rawSaluran === 'datang_ketempat' || rawSaluran.includes('datang')) {
+        mappedSaluran = 'Datang_Ketempat'
+    } else if (rawSaluran === 'telepon' || rawSaluran.includes('telp')) {
+        mappedSaluran = 'Telepon'
+    } else if (rawSaluran === 'whatsapp' || rawSaluran.includes('temuan') || rawSaluran.includes('lapangan')) {
+        mappedSaluran = 'Whatsapp'
+    }
+
+    // 2. Safe Mapping Sumber Aduan (Mendukung enum backend & penulisan teks UI)
+    const rawSumber = String(item.sumberAduan || '').toLowerCase().trim()
+    let mappedSumber = ''
+    if (rawSumber === 'non_pelanggan' || rawSumber.includes('non')) {
+        mappedSumber = 'Non_Pelanggan'
+    } else if (rawSumber === 'pelanggan' || rawSumber.includes('pelanggan')) {
+        mappedSumber = 'Pelanggan'
+    }
+
     // Simpan idPengaduan & status asli item dari backend
     form.value = {
         id: item.idPengaduan,
@@ -79,6 +120,8 @@ const editModal = (item) => {
         noTelp: item.pelanggan?.noHp || '',
         noPdam: item.pelanggan?.noKontakPdam || '',
         alamat: item.pelanggan?.alamat || '',
+        saluranKeluhan: mappedSaluran,
+        sumberAduan: mappedSumber,
         keluhan: item.keluhan || '',
         status: item.status || 'PENDING'
     }
@@ -94,6 +137,8 @@ const submitForm = async () => {
         !form.value.noTelp?.trim() ||
         !form.value.noPdam?.trim() ||
         !form.value.alamat?.trim() ||
+        !form.value.saluranKeluhan?.trim() ||
+        !form.value.sumberAduan?.trim() ||
         !form.value.keluhan?.trim()
     ) {
         errorMessage.value = 'Semua field harus diisi!'
@@ -111,18 +156,22 @@ const submitForm = async () => {
                 noHp: form.value.noTelp,
                 noKontakPdam: form.value.noPdam,
                 alamat: form.value.alamat,
+                saluranKeluhan: form.value.saluranKeluhan,
+                sumberAduan: form.value.sumberAduan,
                 keluhan: form.value.keluhan,
                 status: form.value.status
             }
             const res = await pelangganServices.update(form.value.id, payloadUpdate)
             console.log('update data pelanggan', res.data)
         } else {
-            // Payload Tambah Pelanggan Baru
+            // Payload Tambah Pelanggan Baru (menggunakan pelangganServices)
             const payloadCreate = {
                 namaPelanggan: form.value.namaPelanggan,
                 noHp: form.value.noTelp,
                 noKontakPdam: form.value.noPdam,
                 alamat: form.value.alamat,
+                saluranKeluhan: form.value.saluranKeluhan,
+                sumberAduan: form.value.sumberAduan,
                 keluhan: form.value.keluhan,
                 idUserCS: validIdUserCS
             }
@@ -133,7 +182,7 @@ const submitForm = async () => {
         isModalOpen.value = false
     } catch (error) {
         errorMessage.value = error.response?.data?.message || error.response?.data?.error || 'Gagal menyimpan data pelanggan.'
-        console.error('Detail Error:', error.response?.data)
+        console.error('Detail Error:', error.response?.data || error)
     }
 }
 
@@ -142,26 +191,42 @@ const closeModal = () => {
     isModalOpen.value = false
 }
 
-// search & filter
+// search, filter status & filter tanggal
 const searchQuery = ref('')
 const selectedFilter = ref('All')
+const selectedDate = ref('')
 
-// logic search & filter
+// helper format tanggal ke YYYY-MM-DD untuk pencocokan input date
+const toIsoDateString = (dataString) => {
+    if (!dataString) return ''
+    const date = new Date(dataString)
+    if (isNaN(date.getTime())) return ''
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    return `${year}-${month}-${day}`
+}
+
+// logic search, filter status & filter tanggal
 const filterPelanggan = computed(() => {
     return pelangganList.value.filter(item => {
         const nama = item.pelanggan?.namaPelanggan || ''
         const keluhan = item.keluhan || ''
         const status = item.status || ''
+        const itemDate = toIsoDateString(item.updatedAt || item.createdAt)
 
         // search
         const matchSearch =
             nama.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) ||
             keluhan.toLowerCase().includes(searchQuery.value.toLowerCase().trim())
 
-        // filter
+        // filter status
         const matchStatus = selectedFilter.value === 'All' || status.toUpperCase() === selectedFilter.value.toUpperCase()
 
-        return matchSearch && matchStatus
+        // filter tanggal
+        const matchDate = !selectedDate.value || itemDate === selectedDate.value
+
+        return matchSearch && matchStatus && matchDate
     })
 })
 
@@ -235,9 +300,40 @@ const formatStatus = (status) => {
                         <Search class="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-700 md:text-gray-400"/>
                     </div>
 
-                    <!-- filter (Mobile Icon / Laptop Dropdown) -->
+                    <!-- filter (Mobile Icon / Laptop Dropdown & Kalender) -->
                     <div class="relative w-auto shrink-0 flex items-center gap-2">
                         
+                        <!-- Filter Kalender Mobile Icon (Tampil di Mobile) -->
+                        <div class="relative md:hidden">
+                            <input 
+                                v-model="selectedDate"
+                                type="date"
+                                @click="$event.target.showPicker && $event.target.showPicker()"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            <button type="button" :class="selectedDate ? 'text-app-primary bg-blue-50' : 'text-gray-700 hover:bg-gray-100'" class="p-1.5 rounded-lg transition">
+                                <Calendar class="w-5 h-5 stroke-[2]" />
+                            </button>
+                        </div>
+
+                        <!-- Filter Kalender Laptop (Tampil di Laptop) -->
+                        <div class="hidden md:flex items-center relative">
+                            <input 
+                                v-model="selectedDate"
+                                type="date"
+                                class="bg-white text-xs font-normal px-3.5 py-2.5 rounded-xl border focus:outline-none focus:border-app-primary cursor-pointer"
+                            />
+                            <button 
+                                v-if="selectedDate" 
+                                type="button" 
+                                @click="selectedDate = ''" 
+                                title="Reset tanggal"
+                                class="ml-1.5 text-gray-400 hover:text-gray-700 transition"
+                            >
+                                <X class="w-4 h-4" />
+                            </button>
+                        </div>
+
                         <!-- Dropdown Filter Mobile Icon (Tampil di Mobile) -->
                         <div class="relative md:hidden">
                             <select 
@@ -344,7 +440,7 @@ const formatStatus = (status) => {
 
         </div>
 
-        <!-- pop up tambah dan edit pelanggan -->
+        <!-- pop up tambah dan edit pelanggan (Hanya Tampil di Laptop) -->
         <Teleport to="body">
             <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 transition-all duration-300">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -363,7 +459,7 @@ const formatStatus = (status) => {
                     </div>
 
                     <!-- form -->
-                    <form @submit.prevent="submitForm" class="p-6 space-y-2">
+                    <form @submit.prevent="submitForm" class="p-6 space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Nama</label>
@@ -371,7 +467,7 @@ const formatStatus = (status) => {
                             </div>
 
                             <div>
-                                <label class="block text-xs font-medium mb-1.5">Np. HP</label>
+                                <label class="block text-xs font-medium mb-1.5">No. HP</label>
                                 <input v-model="form.noTelp" inputmode="numeric" @input="form.noTelp = form.noTelp.replace(/\D/g, '')" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
                             </div>
 
@@ -384,11 +480,32 @@ const formatStatus = (status) => {
                                 <label class="block text-xs font-medium mb-1.5">Alamat</label>
                                 <input v-model="form.alamat" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
                             </div>
+
+                            <!-- Dropdown Saluran Keluhan -->
+                            <div>
+                                <label class="block text-xs font-medium mb-1.5">Saluran Keluhan</label>
+                                <select v-model="form.saluranKeluhan" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none cursor-pointer">
+                                    <option value="" disabled selected hidden></option>
+                                    <option value="Datang_Ketempat">Datang Langsung</option>
+                                    <option value="Telepon">Via Telepon</option>
+                                    <option value="Whatsapp">Temuan Lapangan</option>
+                                </select>
+                            </div>
+
+                            <!-- Dropdown Sumber Aduan -->
+                            <div>
+                                <label class="block text-xs font-medium mb-1.5">Sumber Aduan</label>
+                                <select v-model="form.sumberAduan" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none cursor-pointer">
+                                    <option value="" disabled selected hidden></option>
+                                    <option value="Pelanggan">Pelanggan</option>
+                                    <option value="Non_Pelanggan">Non Pelanggan</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-medium mb-1.5">Keluhan</label>
-                            <textarea v-model="form.keluhan" rows="4" class="w-full bg-app-bg border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none resize-none"></textarea>
+                            <textarea v-model="form.keluhan" rows="3" class="w-full bg-app-bg border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none resize-none"></textarea>
                         </div>
 
                         <div class="flex justify-end pt-2">

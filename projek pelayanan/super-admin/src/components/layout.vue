@@ -101,7 +101,7 @@ const closeSidebar = () => {
             </router-link>
 
             <router-link 
-              to="/profile" 
+              to="/users" 
               @click="closeSidebar"
               active-class="bg-app-bg text-gray-900 font-semibold rounded-xl"
               class="flex items-center justify-between px-4 py-3 text-xs transition-all"
@@ -189,9 +189,9 @@ const closeSidebar = () => {
               <ChevronRight class="w-4 h-4" />
             </router-link>
 
-            <!-- Profile -->
+            <!-- Users -->
             <router-link 
-              to="/profile" 
+              to="/users" 
               active-class="bg-app-bg text-gray-900 shadow-sm rounded-l-full font-normal"
               class="flex items-center justify-between px-4 py-3 transition-all group"
             >

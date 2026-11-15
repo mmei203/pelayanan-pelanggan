@@ -1,7 +1,7 @@
 <script setup>
 import layout from './layout.vue'
 import { ref, computed, onMounted } from 'vue'
-import { ChevronLeft, Search, Info, Filter } from 'lucide-vue-next'
+import { ChevronLeft, Search, Info, Filter, Calendar, X } from 'lucide-vue-next'
 import router from '@/router/index.js'
 import monitoringServices from '@/services/monitoringServices.js'
 
@@ -29,26 +29,42 @@ onMounted(() => {
   fetchPelanggan()
 })
 
-// search & filter
+// search, filter status & filter tanggal
 const searchQuery = ref('')
 const selectedFilter = ref('All')
+const selectedDate = ref('')
 
-// logic search & filter
+// helper format tanggal ke YYYY-MM-DD untuk pencocokan input date
+const toIsoDateString = (dataString) => {
+  if (!dataString) return ''
+  const date = new Date(dataString)
+  if (isNaN(date.getTime())) return ''
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// logic search, filter status & filter tanggal
 const filterPelanggan = computed(() => {
   return pelangganList.value.filter(item => {
     const nama = item.pelanggan?.namaPelanggan || ''
     const keluhan = item.keluhan || ''
     const status = item.status || ''
+    const itemDate = toIsoDateString(item.updatedAt || item.createdAt)
 
     // search
     const matchSearch =
       nama.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) ||
       keluhan.toLowerCase().includes(searchQuery.value.toLowerCase().trim())
 
-    // filter
+    // filter status
     const matchStatus = selectedFilter.value === 'All' || status.toUpperCase() === selectedFilter.value.toUpperCase()
 
-    return matchSearch && matchStatus
+    // filter tanggal
+    const matchDate = !selectedDate.value || itemDate === selectedDate.value
+
+    return matchSearch && matchStatus && matchDate
   })
 })
 
@@ -116,9 +132,40 @@ const formatStatus = (status) => {
                         <Search class="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-700 md:text-gray-400"/>
                     </div>
 
-                    <!-- filter (Mobile Icon / Laptop Dropdown) -->
+                    <!-- filter (Mobile Icon / Laptop Dropdown & Kalender) -->
                     <div class="relative w-auto shrink-0 flex items-center gap-2">
                         
+                        <!-- Filter Kalender Mobile Icon (Tampil di Mobile) -->
+                        <div class="relative md:hidden">
+                            <input 
+                                v-model="selectedDate"
+                                type="date"
+                                @click="$event.target.showPicker && $event.target.showPicker()"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            <button type="button" :class="selectedDate ? 'text-app-primary bg-blue-50' : 'text-gray-700 hover:bg-gray-100'" class="p-1.5 rounded-lg transition">
+                                <Calendar class="w-5 h-5 stroke-[2]" />
+                            </button>
+                        </div>
+
+                        <!-- Filter Kalender Laptop (Tampil di Laptop) -->
+                        <div class="hidden md:flex items-center relative">
+                            <input 
+                                v-model="selectedDate"
+                                type="date"
+                                class="bg-white text-xs font-normal px-3.5 py-2.5 rounded-xl border focus:outline-none focus:border-app-primary cursor-pointer"
+                            />
+                            <button 
+                                v-if="selectedDate" 
+                                type="button" 
+                                @click="selectedDate = ''" 
+                                title="Reset tanggal"
+                                class="ml-1.5 text-gray-400 hover:text-gray-700 transition"
+                            >
+                                <X class="w-4 h-4" />
+                            </button>
+                        </div>
+
                         <!-- Dropdown Filter Mobile Icon (Tampil di Mobile) -->
                         <div class="relative md:hidden">
                             <select 

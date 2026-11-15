@@ -11,6 +11,8 @@ const routes = [
   {path: '/detail_pelanggan/:id', name: 'Detail-Pelanggan', component: DetailPelanggan},
   {path: '/history', name: 'History', component: History},
   {path: '/profile', name: 'Profile', component: Profile},
+  {path: '/tambah_pelanggan', name: 'TambahPelanggan', component: () => import('@/components/form_pelanggan.vue')},
+  {path: '/edit_pelanggan/:id', name: 'EditPelanggan', component: () => import('@/components/form_pelanggan.vue')}
 ]
 
 const router = createRouter({

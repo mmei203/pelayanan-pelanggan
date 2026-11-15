@@ -1,15 +1,19 @@
 <script setup>
 import layout from './layout.vue'
 import { ref, computed, onMounted } from 'vue'
-import { ChevronLeft, Search, Plus, X, Filter, Eye, EyeOff } from 'lucide-vue-next'
+import { ChevronLeft, Search, Plus, X, Filter, Eye, EyeOff, SquarePen } from 'lucide-vue-next'
 import router from '@/router/index.js'
 import superServices from '@/services/superServices.js'
 
-// State tambah user
+// Helper pendeteksi layar mobile (< 768px)
+const isMobile = () => window.innerWidth < 768
+
+// State modal & form
 const isModalOpen = ref(false)
+const modalMode = ref('add') // 'add' atau 'edit'
 const modalTitle = ref('Tambah User')
 const errorMessage = ref('')
-const showPassword = ref(false) // State untuk toggle lihat password
+const showPassword = ref(false)
 
 // Get users
 const userList = ref([])
@@ -30,13 +34,13 @@ const fetchUsers = async () => {
     }
 }
 
-// Panggil fetch pada mounted
 onMounted(() => {
     fetchUsers()
 })
 
-// Form data user baru sesuai Swagger POST /users
+// Form data user
 const form = ref({
+    id: null,
     namaUser: '',
     email: '',
     username: '',
@@ -46,10 +50,17 @@ const form = ref({
 
 // Modal Tambah User
 const addModal = () => {
+    if (isMobile()) {
+        router.push('/tambah_user')
+        return
+    }
+
     errorMessage.value = ''
+    modalMode.value = 'add'
     modalTitle.value = 'Tambah User'
     showPassword.value = false
     form.value = { 
+        id: null,
         namaUser: '', 
         email: '', 
         username: '', 
@@ -59,39 +70,97 @@ const addModal = () => {
     isModalOpen.value = true
 }
 
-// Submit Form Tambah User Terhubung ke POST /users
+// Helper pemetaan role Enum Backend -> UI (Super_Admin -> Super Admin)
+const mapRoleToUI = (role) => {
+    if (!role) return 'Operator'
+    const clean = String(role).trim()
+    if (clean.toLowerCase() === 'super_admin' || clean.toLowerCase().includes('super')) {
+        return 'Super Admin'
+    }
+    return clean
+}
+
+// Modal Edit User
+const editModal = (item) => {
+    if (isMobile()) {
+        router.push(`/edit_user/${item.idUser || item.id}`)
+        return
+    }
+
+    errorMessage.value = ''
+    modalMode.value = 'edit'
+    modalTitle.value = 'Edit User'
+    showPassword.value = false
+    form.value = { 
+        id: item.idUser || item.id,
+        namaUser: item.namaUser || '', 
+        email: item.email || '', 
+        username: item.username || '', 
+        password: '', 
+        role: mapRoleToUI(item.role)
+    }
+    isModalOpen.value = true
+}
+
+// Helper pemetaan role UI ke Enum Prisma Backend (Super Admin -> Super_Admin)
+const mapRoleToBackend = (role) => {
+    if (!role) return 'Operator'
+    const clean = String(role).trim()
+    
+    if (clean === 'Super Admin' || clean.toLowerCase().includes('super')) {
+        return 'Super_Admin'
+    }
+    return clean
+}
+
+// Submit Form (Tambah & Edit)
 const submitForm = async () => {
     errorMessage.value = ''
-    // Cek field kosong
+    
+    // Cek field wajib selain password (jika edit)
     if (
         !form.value.namaUser?.trim() ||
         !form.value.email?.trim() ||
         !form.value.username?.trim() ||
-        !form.value.password?.trim() ||
-        !form.value.role?.trim()
+        !form.value.role?.trim() ||
+        (modalMode.value === 'add' && !form.value.password?.trim())
     ) {
-        errorMessage.value = 'Semua field harus diisi!'
+        errorMessage.value = 'Semua field wajib harus diisi!'
         return
     }
 
     try {
-        const payloadCreate = {
-            namaUser: form.value.namaUser,
-            email: form.value.email,
-            username: form.value.username,
-            password: form.value.password,
-            role: form.value.role
+        const payloadRole = mapRoleToBackend(form.value.role)
+
+        if (modalMode.value === 'edit' && form.value.id) {
+            const payloadUpdate = {
+                namaUser: form.value.namaUser.trim(),
+                email: form.value.email.trim(),
+                username: form.value.username.trim(),
+                role: payloadRole
+            }
+
+            if (form.value.password && form.value.password.trim() !== '') {
+                payloadUpdate.password = form.value.password.trim()
+            }
+
+            await superServices.updateUser(form.value.id, payloadUpdate)
+        } else {
+            const payloadCreate = {
+                namaUser: form.value.namaUser.trim(),
+                email: form.value.email.trim(),
+                username: form.value.username.trim(),
+                password: form.value.password.trim(),
+                role: payloadRole
+            }
+            await superServices.createUser(payloadCreate)
         }
-        
-        // Memanggil service POST /users
-        const res = await superServices.createUser(payloadCreate)
-        console.log('User baru berhasil ditambahkan:', res.data)
         
         await fetchUsers()
         isModalOpen.value = false
     } catch (error) {
         errorMessage.value = error.response?.data?.message || error.response?.data?.error || 'Gagal menyimpan data user.'
-        console.error('Detail Error:', error.response?.data || error)
+        console.error('Detail Error Backend:', error.response?.data || error)
     }
 }
 
@@ -105,43 +174,27 @@ const closeModal = () => {
 const searchQuery = ref('')
 const selectedFilter = ref('All')
 
-// Logika Search & Filter berdasarkan Role User
 const filterUsers = computed(() => {
     return userList.value.filter(item => {
         const nama = item.namaUser || ''
         const email = item.email || ''
         const username = item.username || ''
-        const role = item.role || ''
+        const role = (item.role || '').replace(/_/g, ' ')
 
-        // Search
         const matchSearch =
             nama.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) ||
             email.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) ||
             username.toLowerCase().includes(searchQuery.value.toLowerCase().trim())
 
-        // Filter Role
         const matchRole = selectedFilter.value === 'All' || role.toUpperCase() === selectedFilter.value.toUpperCase()
 
         return matchSearch && matchRole
     })
 })
 
-// Format Tanggal
-const formatData = (dataString) => {
-    if (!dataString) return '-'
-    const date = new Date(dataString)
-
-    const day = date.getDate().toString().padStart(2, '0')
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const year = date.getFullYear()
-
-    return `${day}/${month}/${year}`
-}
-
-// Format Text
 const formatText = (text) => {
     if (!text) return '-'
-    return text
+    return String(text).replace(/_/g, ' ')
 }
 </script>
 
@@ -152,7 +205,7 @@ const formatText = (text) => {
             <!-- Judul Halaman & Tombol Tambah -->
             <div class="flex items-center md:items-end justify-between">
                 <div>
-                    <!-- Breadcrumb (Hanya tampil di Laptop) -->
+                    <!-- Breadcrumb -->
                     <nav class="hidden md:flex text-xs mb-1 items-center gap-1 font-normal">
                         <router-link to="/dashboard" class="hover:underline">Dashboard</router-link>
                         <span>&gt;</span>
@@ -168,7 +221,7 @@ const formatText = (text) => {
                     </div>
                 </div>
 
-                <!-- Tombol Tambah User (Hanya tampil di Laptop) -->
+                <!-- Tombol Tambah User (Laptop) -->
                 <button @click="addModal" class="hidden md:flex bg-app-secondary hover:opacity-90 text-white text-xs font-semibold px-4 py-2.5 rounded-xl items-center gap-2 shadow-sm transition">
                     <Plus class="w-3 h-3 stroke-[5]"/>
                     <span>Tambah User</span>
@@ -195,34 +248,36 @@ const formatText = (text) => {
                     <!-- Filter Dropdown -->
                     <div class="relative w-auto shrink-0 flex items-center gap-2">
                         
-                        <!-- Dropdown Filter Mobile Icon (Tampil di Mobile) -->
+                        <!-- Dropdown Filter Mobile Icon -->
                         <div class="relative md:hidden">
                             <select 
                                 v-model="selectedFilter"
                                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                             >
                                 <option value="All">Semua Role</option>
+                                <option value="Super Admin">Super Admin</option>
                                 <option value="CS">CS</option>
-                                <option value="OPERATOR">Operator</option>
-                                <option value="MONITORING">Monitoring</option>
+                                <option value="Operator">Operator</option>
+                                <option value="Pengawas">Pengawas</option>
                             </select>
                             <button type="button" class="p-1.5 text-gray-700 hover:bg-gray-100 rounded-lg">
                                 <Filter class="w-5 h-5 stroke-[2]" />
                             </button>
                         </div>
 
-                        <!-- Dropdown Filter Laptop (Tampil di Laptop) -->
+                        <!-- Dropdown Filter Laptop -->
                         <select 
                             v-model="selectedFilter"
                             class="hidden md:block apperarance-none bg-white text-xs font-normal pl-4 pr-10 py-2.5 rounded-xl border focus:outline-none focus:border-app-primary cursor-pointer"
                         >
                             <option value="All">Filter by: Role</option>
+                            <option value="Super Admin">Super Admin</option>
                             <option value="CS">CS</option>
-                            <option value="OPERATOR">Operator</option>
-                            <option value="MONITORING">Monitoring</option>
+                            <option value="Operator">Operator</option>
+                            <option value="Pengawas">Pengawas</option>
                         </select>
 
-                        <!-- Tombol Tambah User Khusus Mobile -->
+                        <!-- Tombol Tambah User Mobile -->
                         <button @click="addModal" class="md:hidden bg-app-success hover:opacity-90 text-white p-1.5 rounded-lg flex items-center justify-center shadow-xs transition">
                             <Plus class="w-5 h-5 stroke-[3]"/>
                         </button>
@@ -240,25 +295,22 @@ const formatText = (text) => {
                                 <th class="pb-2 md:pb-3.5 font-medium text-center">Email</th>
                                 <th class="pb-2 md:pb-3.5 font-medium text-center">Username</th>
                                 <th class="pb-2 md:pb-3.5 font-medium text-center">Role</th>
-                                <!-- <th class="pb-2 md:pb-3.5 font-medium text-center">Tanggal Dibuat</th> -->
+                                <th class="pb-2 md:pb-3.5 font-medium text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-300 text-[11px] md:text-xs text-center">
-                            <!-- Loading State -->
                             <tr v-if="isLoading">
                                 <td colspan="6" class="py-6 text-center text-gray-500 font-normal">
                                     Memuat data user...
                                 </td>
                             </tr>
 
-                            <!-- Error State -->
                             <tr v-else-if="apiError">
                                 <td colspan="6" class="py-6 text-center text-red-500 font-normal">
                                     {{ apiError }}
                                 </td>
                             </tr>
 
-                            <!-- Data Render -->
                             <tr v-else v-for="(item, index) in filterUsers" :key="item.idUser || index" class="hover:bg-gray-50 transition">
                                 <td class="hidden md:table-cell py-3 font-normal">{{ index + 1 }}</td>
                                 <td class="py-2.5 md:py-3 font-normal text-center md:text-left">{{ item.namaUser || '-' }}</td>
@@ -266,18 +318,24 @@ const formatText = (text) => {
                                 <td class="py-2.5 md:py-3 font-normal text-center">{{ item.username || '-' }}</td>
                                 <td class="py-2.5 md:py-3 font-normal text-center">
                                     <span :class="{
+                                        'bg-app-primary text-white': (item.role || '').toLowerCase().includes('super'),
                                         'bg-app-secondary text-white': (item.role || '').toUpperCase() === 'CS',
-                                        'bg-app-warning text-white': (item.role || '').toUpperCase() === 'OPERATOR',
-                                        'bg-app-success text-white': (item.role || '').toUpperCase() === 'MONITORING' || (item.role || '').toUpperCase() === 'ADMIN'
+                                        'bg-app-warning text-white': (item.role || '').toLowerCase().includes('operator'),
+                                        'bg-app-success text-white': (item.role || '').toLowerCase().includes('pengawas')
                                     }"
                                     class="w-[70px] md:w-[110px] py-1 text-[10px] md:text-xs font-normal text-center inline-block rounded-md md:rounded-lg shadow-xs md:shadow-sm">
                                         {{ formatText(item.role) }}
                                     </span>
                                 </td>
-                                <!-- <td class="py-2.5 md:py-3 font-normal whitespace-nowrap">{{ formatData(item.createdAt) }}</td> -->
+                                <td class="py-2.5 md:py-3">
+                                    <div class="flex items-center justify-center">
+                                        <button @click="editModal(item)" class="hover:text-gray-800 transition">
+                                            <SquarePen class="w-3.5 h-3.5 md:w-4 md:h-4 stroke-[1.5]" />
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
 
-                            <!-- Empty State -->
                             <tr v-if="!isLoading && !apiError && filterUsers.length === 0">
                                 <td colspan="6" class="py-3 text-center font-normal">
                                     Data user tidak ditemukan.
@@ -292,7 +350,7 @@ const formatText = (text) => {
 
         </div>
 
-        <!-- Pop Up Tambah User -->
+        <!-- Pop Up Tambah & Edit User -->
         <Teleport to="body">
             <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 transition-all duration-300">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -310,41 +368,41 @@ const formatText = (text) => {
                         <button type="button" @click="errorMessage = ''" class="font-normal">&times;</button>
                     </div>
 
-                    <!-- Form Tambah User -->
+                    <!-- Form Tambah / Edit User -->
                     <form @submit.prevent="submitForm" class="p-6 space-y-2">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Nama User</label>
-                                <input v-model="form.namaUser" type="text" placeholder="Masukkan nama user" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.namaUser" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Email</label>
-                                <input v-model="form.email" type="email" placeholder="contoh@pald.co.id" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.email" type="email" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Username</label>
-                                <input v-model="form.username" type="text" placeholder="Masukkan username" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.username" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Role</label>
                                 <select v-model="form.role" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none cursor-pointer">
+                                    <option value="Super Admin">Super Admin</option>
                                     <option value="CS">CS</option>
                                     <option value="Operator">Operator</option>
-                                    <option value="Monitoring">Monitoring</option>
+                                    <option value="Pengawas">Pengawas</option>
                                 </select>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium mb-1.5">Password</label>
+                            <label class="block text-xs font-medium mb-1.5">Password {{ modalMode === 'edit' ? '(Opsional)' : '' }}</label>
                             <div class="relative w-full">
                                 <input 
                                     v-model="form.password" 
                                     :type="showPassword ? 'text' : 'password'" 
-                                    placeholder="Masukkan password" 
                                     class="w-full bg-app-bg rounded-xl pl-4 pr-10 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none"
                                 />
                                 <button 
@@ -359,7 +417,9 @@ const formatText = (text) => {
                         </div>
 
                         <div class="flex justify-end pt-4">
-                            <button type="submit" class="bg-app-success hover:opacity-90 text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-sm transition">
+                            <button type="submit" 
+                                :class="modalMode === 'edit' ? 'bg-app-warning hover:opacity-90' : 'bg-app-success hover:opacity-90'"
+                                class="text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-sm transition">
                                 Simpan
                             </button>
                         </div>

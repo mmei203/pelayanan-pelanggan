@@ -1,7 +1,7 @@
 import axios from 'axios' 
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:5500/api',
+    baseURL: 'https://backend-pelayanan-pelanggan.vercel.app/api',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'

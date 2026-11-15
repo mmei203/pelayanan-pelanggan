@@ -1,12 +1,13 @@
 <script setup>
 import layout from './layout.vue'
 import { ref, computed, onMounted } from 'vue'
-import { ChevronLeft, Search } from 'lucide-vue-next'
+import { ChevronLeft, Search, Calendar, X } from 'lucide-vue-next'
 import monitoringServices from '@/services/superServices.js'
 
 const isLoading = ref(false)
 const apiError = ref('')
 const searchQuery = ref('')
+const selectedDate = ref('')
 const pelangganHistory = ref([])
 
 // Fetch Data History dari Service Monitoring
@@ -28,18 +29,36 @@ onMounted(() => {
   fetchHistory()
 })
 
-// Logika Pencarian
+// Helper format tanggal ke YYYY-MM-DD untuk pencocokan input date
+const toIsoDateString = (dateString) => {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+}
+
+// Logika Pencarian & Filter Tanggal
 const filterHistory = computed(() => {
     const query = searchQuery.value.toLowerCase().trim()
-    if (!query) return pelangganHistory.value
 
     return pelangganHistory.value.filter(item => {
         const nama = item.pelanggan?.namaPelanggan || ''
         const keluhan = item.keluhan || ''
+        const tglMasuk = toIsoDateString(item.tanggalDiterima || item.createdAt)
+        const tglSelesai = toIsoDateString(item.tanggalSelesai)
         
-        const matchNama = nama.toLowerCase().includes(query)
-        const matchKeluhan = keluhan.toLowerCase().includes(query)
-        return matchNama || matchKeluhan
+        const matchSearch = !query || 
+            nama.toLowerCase().includes(query) || 
+            keluhan.toLowerCase().includes(query)
+
+        const matchDate = !selectedDate.value || 
+            tglMasuk === selectedDate.value || 
+            tglSelesai === selectedDate.value
+
+        return matchSearch && matchDate
     })
 })
 
@@ -83,9 +102,9 @@ const formatDateWithTime = (dateString) => {
             <!-- Card Container (Transparan di Mobile, Putih di Laptop) -->
             <div class="bg-transparent md:bg-white rounded-2xl shadow-none md:shadow-sm border-none md:border border-gray-100 flex-1 flex flex-col overflow-hidden">
                 
-                <!-- Search Input -->
-                <div class="p-0 md:p-6 border-b-0 md:border-b border-gray-200 shadow-none md:shadow-lg flex flex-col md:flex-row items-center justify-between gap-4 mb-4 md:mb-0">
-                    <div class="relative w-full flex-1">
+                <!-- Search & Kalender -->
+                <div class="p-0 md:p-6 border-b-0 md:border-b border-gray-200 shadow-none md:shadow-lg flex flex-row items-center justify-between gap-2 md:gap-4 mb-4 md:mb-0">
+                    <div class="relative flex-1">
                         <input 
                             v-model="searchQuery"
                             type="text"
@@ -93,6 +112,40 @@ const formatDateWithTime = (dateString) => {
                             class="w-full pl-4 pr-10 py-1.5 md:py-2.5 text-xs md:text-sm rounded-full md:rounded-xl border border-gray-800 md:border-gray-300 focus:outline-none focus:border-app-primary transition bg-white" 
                         />
                         <Search class="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-700 md:text-gray-400"/>
+                    </div>
+
+                    <!-- Filter Kalender -->
+                    <div class="relative w-auto shrink-0 flex items-center gap-2">
+                        <!-- Filter Kalender Mobile Icon -->
+                        <div class="relative md:hidden">
+                            <input 
+                                v-model="selectedDate"
+                                type="date"
+                                @click="$event.target.showPicker && $event.target.showPicker()"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                            <button type="button" :class="selectedDate ? 'text-app-primary bg-blue-50' : 'text-gray-700 hover:bg-gray-100'" class="p-1.5 rounded-lg transition">
+                                <Calendar class="w-5 h-5 stroke-[2]" />
+                            </button>
+                        </div>
+
+                        <!-- Filter Kalender Laptop -->
+                        <div class="hidden md:flex items-center relative">
+                            <input 
+                                v-model="selectedDate"
+                                type="date"
+                                class="bg-white text-xs font-normal px-3.5 py-2.5 rounded-xl border focus:outline-none focus:border-app-primary cursor-pointer"
+                            />
+                            <button 
+                                v-if="selectedDate" 
+                                type="button" 
+                                @click="selectedDate = ''" 
+                                title="Reset tanggal"
+                                class="ml-1.5 text-gray-400 hover:text-gray-700 transition"
+                            >
+                                <X class="w-4 h-4" />
+                            </button>
+                        </div>
                     </div>
                 </div>
 

@@ -1,6 +1,6 @@
 <script setup>
 import layout from './layout.vue'
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ChevronLeft } from 'lucide-vue-next'
 import pelangganServices from '@/services/pelangganServices.js'
@@ -16,11 +16,34 @@ const detailPelanggan = ref({
   noPdam: '-',
   keluhan: '-',
   noTelp: '-',
+  saluranKeluhan: '-',
+  sumberAduan: '-',
   operator: '-',
   createdAt: null,
   updatedAt: null,
   finished: null
 })
+
+// Helper Mapping Saluran Keluhan Backend -> Display Teks
+const mapSaluranKeluhan = (rawVal) => {
+  if (!rawVal) return '-'
+  const val = String(rawVal).trim()
+  const lower = val.toLowerCase()
+  if (val === 'Datang_Ketempat' || lower.includes('datang')) return 'Datang Langsung'
+  if (val === 'Telepon' || lower.includes('telepon') || lower.includes('telp')) return 'Via Telepon'
+  if (val === 'Whatsapp' || val === 'WhatsApp' || lower.includes('whatsapp') || lower.includes('temuan') || lower.includes('lapangan')) return 'Temuan Lapangan'
+  return val
+}
+
+// Helper Mapping Sumber Aduan Backend -> Display Teks
+const mapSumberAduan = (rawVal) => {
+  if (!rawVal) return '-'
+  const val = String(rawVal).trim()
+  const lower = val.toLowerCase()
+  if (val === 'Non_Pelanggan' || val === 'Non_Pelangan' || lower.includes('non')) return 'Non Pelanggan'
+  if (val === 'Pelanggan' || lower.includes('pelanggan')) return 'Pelanggan'
+  return val
+}
 
 // Helper Format Tanggal untuk Laptop (dengan Jam & Menit)
 const formatDateLaptop = (dateString) => {
@@ -60,6 +83,8 @@ const fetchDetailPelanggan = async () => {
       noPdam: data.pelanggan?.noKontakPdam || '-',
       keluhan: data.keluhan || '-',
       noTelp: data.pelanggan?.noHp || '-',
+      saluranKeluhan: mapSaluranKeluhan(data.saluranKeluhan),
+      sumberAduan: mapSumberAduan(data.sumberAduan),
       operator: data.penangani?.namaUser || '-',
       createdAt: data.tanggalDiterima || data.createdAt,
       updatedAt: data.tanggalDiproses,
@@ -119,6 +144,14 @@ onMounted(() => {
           </h2>
 
           <div class="space-y-2.5 md:space-y-3 text-xs">
+            <div class="grid grid-cols-3 gap-2 items-start">
+              <span class="font-semibold text-app-secondary">Saluran Keluhan</span>
+              <span class="col-span-2 font-light text-app-text">{{ detailPelanggan.saluranKeluhan }}</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 items-start">
+              <span class="font-semibold text-app-secondary">Sumber Aduan</span>
+              <span class="col-span-2 font-light text-app-text">{{ detailPelanggan.sumberAduan }}</span>
+            </div>
             <div class="grid grid-cols-3 gap-2 items-start">
               <span class="font-semibold text-app-secondary">Nama</span>
               <span class="col-span-2 font-light text-app-text">{{ detailPelanggan.namaPelanggan }}</span>
