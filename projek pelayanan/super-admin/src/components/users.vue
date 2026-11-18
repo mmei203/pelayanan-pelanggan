@@ -10,6 +10,7 @@ const isMobile = () => window.innerWidth < 768
 
 // State modal & form
 const isModalOpen = ref(false)
+const isSubmitting = ref(false)
 const modalMode = ref('add') // 'add' atau 'edit'
 const modalTitle = ref('Tambah User')
 const errorMessage = ref('')
@@ -115,6 +116,7 @@ const mapRoleToBackend = (role) => {
 
 // Submit Form (Tambah & Edit)
 const submitForm = async () => {
+    if (isSubmitting.value) return
     errorMessage.value = ''
     
     // Cek field wajib selain password (jika edit)
@@ -129,6 +131,7 @@ const submitForm = async () => {
         return
     }
 
+    isSubmitting.value = true
     try {
         const payloadRole = mapRoleToBackend(form.value.role)
 
@@ -156,15 +159,18 @@ const submitForm = async () => {
             await superServices.createUser(payloadCreate)
         }
         
-        await fetchUsers()
         isModalOpen.value = false
+        await fetchUsers()
     } catch (error) {
         errorMessage.value = error.response?.data?.message || error.response?.data?.error || 'Gagal menyimpan data user.'
         console.error('Detail Error Backend:', error.response?.data || error)
+    } finally {
+        isSubmitting.value = false
     }
 }
 
 const closeModal = () => {
+    if (isSubmitting.value) return
     errorMessage.value = ''
     showPassword.value = false
     isModalOpen.value = false
@@ -358,7 +364,7 @@ const formatText = (text) => {
                     <!-- Header Modal -->
                     <div class="bg-app-primary2 px-6 py-3 flex items-center justify-between">
                         <h3 class="text-white font-semibold text-sm">{{ modalTitle }}</h3>
-                        <button @click="closeModal" class="text-white/80 hover:text-white transition">
+                        <button @click="closeModal" :disabled="isSubmitting" class="text-white/80 hover:text-white transition disabled:opacity-50">
                             <X class="w-5 h-5"/>
                         </button>
                     </div>
@@ -373,22 +379,22 @@ const formatText = (text) => {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Nama User</label>
-                                <input v-model="form.namaUser" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.namaUser" :disabled="isSubmitting" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none disabled:opacity-60">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Email</label>
-                                <input v-model="form.email" type="email" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.email" :disabled="isSubmitting" type="email" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none disabled:opacity-60">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Username</label>
-                                <input v-model="form.username" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.username" :disabled="isSubmitting" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none disabled:opacity-60">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Role</label>
-                                <select v-model="form.role" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none cursor-pointer">
+                                <select v-model="form.role" :disabled="isSubmitting" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none cursor-pointer disabled:opacity-60">
                                     <option value="Super Admin">Super Admin</option>
                                     <option value="CS">CS</option>
                                     <option value="Operator">Operator</option>
@@ -402,13 +408,15 @@ const formatText = (text) => {
                             <div class="relative w-full">
                                 <input 
                                     v-model="form.password" 
+                                    :disabled="isSubmitting"
                                     :type="showPassword ? 'text' : 'password'" 
-                                    class="w-full bg-app-bg rounded-xl pl-4 pr-10 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none"
+                                    class="w-full bg-app-bg rounded-xl pl-4 pr-10 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none disabled:opacity-60"
                                 />
                                 <button 
                                     type="button" 
+                                    :disabled="isSubmitting"
                                     @click="showPassword = !showPassword"
-                                    class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
+                                    class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition disabled:opacity-50"
                                 >
                                     <Eye v-if="!showPassword" class="w-4 h-4" />
                                     <EyeOff v-else class="w-4 h-4" />
@@ -418,9 +426,10 @@ const formatText = (text) => {
 
                         <div class="flex justify-end pt-4">
                             <button type="submit" 
+                                :disabled="isSubmitting"
                                 :class="modalMode === 'edit' ? 'bg-app-warning hover:opacity-90' : 'bg-app-success hover:opacity-90'"
-                                class="text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-sm transition">
-                                Simpan
+                                class="text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                {{ isSubmitting ? 'Menyimpan...' : 'Simpan' }}
                             </button>
                         </div>
 
