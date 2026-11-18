@@ -82,7 +82,7 @@ const getStatusClass = (status) => {
       <!-- Judul Halaman -->
       <div>
         <h1 class="text-2xl md:text-3xl font-bold text-app-text tracking-tight">Dashboard</h1>
-        <p class="text-base md:text-lg font-medium mt-0.5">Selamat Datang Admin Monitoring</p>
+        <p class="text-base md:text-lg font-medium mt-0.5">Selamat Datang Super Admin</p>
       </div>
 
       <!-- Ringkasan Statistik Cards -->
