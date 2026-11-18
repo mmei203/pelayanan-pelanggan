@@ -10,6 +10,7 @@ const isMobile = () => window.innerWidth < 768
 
 // state tambah dan edit pelanggan
 const isModalOpen = ref(false)
+const isSubmitting = ref(false)
 const modalMode = ref('add')
 const modalTitle = ref('Tambah Pelanggan')
 const errorMessage = ref('')
@@ -130,6 +131,7 @@ const editModal = (item) => {
 
 // submit
 const submitForm = async () => {
+    if (isSubmitting.value) return
     errorMessage.value = ''
     // cek field kosong
     if (
@@ -145,6 +147,7 @@ const submitForm = async () => {
         return
     }
 
+    isSubmitting.value = true
     try {
         const loggedUser = JSON.parse(localStorage.getItem('user') || '{}')
         const validIdUserCS = loggedUser.idUser || loggedUser.id || 'b554b7d4-a1b3-4617-b58a-1bb15fe1454f'
@@ -178,15 +181,19 @@ const submitForm = async () => {
             const res = await superServices.create(payloadCreate)
             console.log('tambah data pelanggan', res.data)
         }
-        await fetchPelanggan()
+
         isModalOpen.value = false
+        await fetchPelanggan()
     } catch (error) {
         errorMessage.value = error.response?.data?.message || error.response?.data?.error || 'Gagal menyimpan data pelanggan.'
         console.error('Detail Error:', error.response?.data || error)
+    } finally {
+        isSubmitting.value = false
     }
 }
 
 const closeModal = () => {
+    if (isSubmitting.value) return
     errorMessage.value = ''
     isModalOpen.value = false
 }
@@ -448,7 +455,7 @@ const formatStatus = (status) => {
                     <!-- header -->
                     <div class="bg-app-primary2 px-6 py-3 flex items-center justify-between">
                         <h3 class="text-white font-semibold text-sm">{{ modalTitle }}</h3>
-                        <button @click="closeModal" class="text-white/80 hover:text-white transition">
+                        <button @click="closeModal" :disabled="isSubmitting" class="text-white/80 hover:text-white transition disabled:opacity-50">
                             <X class="w-5 h-5"/>
                         </button>
                     </div>
@@ -463,28 +470,28 @@ const formatStatus = (status) => {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Nama</label>
-                                <input v-model="form.namaPelanggan" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.namaPelanggan" :disabled="isSubmitting" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none disabled:opacity-60">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">No. HP</label>
-                                <input v-model="form.noTelp" inputmode="numeric" @input="form.noTelp = form.noTelp.replace(/\D/g, '')" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.noTelp" :disabled="isSubmitting" inputmode="numeric" @input="form.noTelp = form.noTelp.replace(/\D/g, '')" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none disabled:opacity-60">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">No. Kontak PDAM</label>
-                                <input v-model="form.noPdam" inputmode="numeric" @input="form.noPdam = form.noPdam.replace(/\D/g, '')" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.noPdam" :disabled="isSubmitting" inputmode="numeric" @input="form.noPdam = form.noPdam.replace(/\D/g, '')" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none disabled:opacity-60">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Alamat</label>
-                                <input v-model="form.alamat" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none">
+                                <input v-model="form.alamat" :disabled="isSubmitting" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none disabled:opacity-60">
                             </div>
 
                             <!-- Dropdown Saluran Keluhan -->
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Saluran Keluhan</label>
-                                <select v-model="form.saluranKeluhan" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none cursor-pointer">
+                                <select v-model="form.saluranKeluhan" :disabled="isSubmitting" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none cursor-pointer disabled:opacity-60">
                                     <option value="" disabled selected hidden></option>
                                     <option value="Datang_Ketempat">Datang Langsung</option>
                                     <option value="Telepon">Via Telepon</option>
@@ -495,7 +502,7 @@ const formatStatus = (status) => {
                             <!-- Dropdown Sumber Aduan -->
                             <div>
                                 <label class="block text-xs font-medium mb-1.5">Sumber Aduan</label>
-                                <select v-model="form.sumberAduan" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none cursor-pointer">
+                                <select v-model="form.sumberAduan" :disabled="isSubmitting" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none cursor-pointer disabled:opacity-60">
                                     <option value="" disabled selected hidden></option>
                                     <option value="Pelanggan">Pelanggan</option>
                                     <option value="Non_Pelanggan">Non Pelanggan</option>
@@ -505,17 +512,18 @@ const formatStatus = (status) => {
 
                         <div>
                             <label class="block text-xs font-medium mb-1.5">Keluhan</label>
-                            <textarea v-model="form.keluhan" rows="3" class="w-full bg-app-bg border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none resize-none"></textarea>
+                            <textarea v-model="form.keluhan" :disabled="isSubmitting" rows="3" class="w-full bg-app-bg border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none resize-none disabled:opacity-60"></textarea>
                         </div>
 
                         <div class="flex justify-end pt-2">
                             <button type="submit" 
+                                :disabled="isSubmitting"
                                 :class="{
                                     'bg-app-success hover:opacity-90': modalMode === 'add',
                                     'bg-app-warning hover:opacity-90': modalMode === 'edit'
                                 }"
-                                class="text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-sm transition">
-                                Simpan
+                                class="text-white text-xs font-semibold px-6 py-2.5 rounded-xl shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                {{ isSubmitting ? 'Menyimpan...' : 'Simpan' }}
                             </button>
                         </div>
 
