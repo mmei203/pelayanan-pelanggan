@@ -22,7 +22,7 @@ const fetchData = async () => {
     listPelanggan.value = resPelanggan.data?.data || resPelanggan.data || []
     listHistory.value = resHistory.data?.data || resHistory.data || []
   } catch (error) {
-    apiError.value = 'Gagal memuat data dashboard monitoring.'
+    apiError.value = 'Gagal memuat data dashboard super admin.'
     console.error(error)
   } finally {
     isLoading.value = false

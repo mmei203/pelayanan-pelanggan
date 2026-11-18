@@ -8,11 +8,11 @@ export default {
         return apiClient.post('/pelanggan/tambah-pelanggan', data)
     },
     update(id, data) {
-    return apiClient.put(`/pelanggan/${id}`, data, {
-        headers: {
-        'Content-Type': 'multipart/form-data'
-        }
-    })
+        return apiClient.put(`/pelanggan/${id}`, data, {
+            headers: {
+            'Content-Type': 'multipart/form-data'
+            }
+        })
     },
     getById(id){
         return apiClient.get(`/pelanggan/${id}`)

@@ -242,7 +242,7 @@ const formatStatus = (status) => {
                     {{ formatStatus(item.status) }}
                   </span>
                 </td>
-                <td class="py-2.5 md:py-3 font-normal whitespace-nowrap">{{ formatData(item.updatedAt) }}</td>
+                <td class="py-2.5 md:py-3 font-normal whitespace-nowrap">{{ formatData(item.tanggalDiterima) }}</td>
                 <td class="py-2.5 md:py-3">
                   <div class="flex items-center justify-center">
                     <!-- Icon Info (Satu-satunya aksi di Laptop & Mobile) -->
