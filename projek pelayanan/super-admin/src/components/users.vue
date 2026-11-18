@@ -291,7 +291,7 @@ const formatText = (text) => {
                         <thead>
                             <tr class="border-b border-gray-300 text-xs md:text-sm text-center">
                                 <th class="hidden md:table-cell pb-3.5 w-12 font-medium">No</th>
-                                <th class="pb-2 md:pb-3.5 font-medium leading-tight text-center md:text-left">Nama User</th>
+                                <th class="pb-2 md:pb-3.5 font-medium leading-tight text-center md:text-left">Nama Lengkap</th>
                                 <th class="pb-2 md:pb-3.5 font-medium text-center">Email</th>
                                 <th class="pb-2 md:pb-3.5 font-medium text-center">Username</th>
                                 <th class="pb-2 md:pb-3.5 font-medium text-center">Role</th>

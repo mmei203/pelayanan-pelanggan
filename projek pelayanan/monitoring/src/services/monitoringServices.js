@@ -9,5 +9,10 @@ export default {
     },
     history(){
         return apiClient.get('/pelanggan/history')
-    }
+    },
+    print(id) {
+        return apiClient.get(`/pelanggan/${id}/print`, {
+            responseType: 'blob' // Agar menerima return dalam bentuk file binary/PDF
+        })
+    },
 }

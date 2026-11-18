@@ -270,7 +270,7 @@ const simpanPerubahan = async () => {
 
   const hasFoto = fotoFile.value || (detailPelanggan.value && detailPelanggan.value.fotoKeluhan)
   if (!hasFoto) {
-    showToast('Foto keluhan wajib diupload!', 'warning')
+    showToast('Foto dokumentasi wajib diupload!', 'warning')
     return
   }
 
