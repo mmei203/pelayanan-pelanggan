@@ -90,14 +90,16 @@ const formatDateLaptop = (dateString) => {
   return `${day}/${month}/${year} ${hours}:${minutes}`
 }
 
-// Helper Format Tanggal untuk Mobile (DD/MM/YYYY)
+// Helper Format Tanggal untuk Mobile (dengan Jam & Menit)
 const formatDateMobile = (dateString) => {
   if (!dateString) return '-'
   const date = new Date(dateString)
   const day = String(date.getDate()).padStart(2, '0')
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const year = date.getFullYear()
-  return `${day}/${month}/${year}`
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${day}/${month}/${year} ${hours}:${minutes}`
 }
 
 // Fetch Detail Pelanggan dari API Monitoring

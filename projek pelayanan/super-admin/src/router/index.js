@@ -4,6 +4,8 @@ import DaftarPelanggan from '../components/daftar_pelanggan.vue'
 import DetailPelanggan from '../components/detail_pelanggan.vue'
 import History from '../components/history.vue'
 import Users from '../components/users.vue'
+import Login from '../components/login.vue'
+import Profile from '../components/profile.vue'
 
 const routes = [
   {path: '/dashboard', name: 'Dashboard', component: Dashboard},
@@ -15,7 +17,11 @@ const routes = [
   {path: '/edit_pelanggan/:id', name: 'EditPelanggan', component: () => import('@/components/form_pelanggan.vue')},
   {path: '/tambah_user', name: 'TambahUser', component: () => import('@/components/form_user.vue')
   },
-  {path: '/edit_user/:id', name: 'EditUser', component: () => import('@/components/form_user.vue')}
+  {path: '/edit_user/:id', name: 'EditUser', component: () => import('@/components/form_user.vue')},
+  { path: '/', redirect: '/login' },
+  { path: '/login', name: 'Login', component: Login },
+  {path: '/profile', name: 'Profile', component: Profile},
+
 ]
 
 const router = createRouter({

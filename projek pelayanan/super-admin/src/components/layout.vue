@@ -1,9 +1,14 @@
 <script setup>
 import { ref } from 'vue'
-import { Tv2, Users, History, UserCircle, LogOut, ChevronRight, Menu } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+import { Tv2, Users, History, UserCircle, UserCog, LogOut, ChevronRight, Menu } from 'lucide-vue-next'
 import logoPald from '@/assets/logo.png'
+import authServices from '@/services/auth.js'
 
+const router = useRouter()
 const isSidebarOpen = ref(false)
+const isLogoutModalOpen = ref(false)
+const isLoggingOut = ref(false)
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value
@@ -12,6 +17,37 @@ const toggleSidebar = () => {
 // Fungsi menutup sidebar jika menu diklik
 const closeSidebar = () => {
   isSidebarOpen.value = false
+}
+
+// Buka popup konfirmasi logout
+const openLogoutModal = () => {
+  closeSidebar()
+  isLogoutModalOpen.value = true
+}
+
+// Tutup popup konfirmasi logout
+const closeLogoutModal = () => {
+  if (isLoggingOut.value) return
+  isLogoutModalOpen.value = false
+}
+
+// Fungsi Logout terhubung dengan auth.js
+const confirmLogout = async () => {
+  if (isLoggingOut.value) return
+  isLoggingOut.value = true
+  try {
+    if (typeof authServices.logout === 'function') {
+      await authServices.logout()
+    }
+  } catch (error) {
+    console.error('Logout error:', error)
+  } finally {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    isLoggingOut.value = false
+    isLogoutModalOpen.value = false
+    router.push('/')
+  }
 }
 </script>
 
@@ -107,15 +143,28 @@ const closeSidebar = () => {
               class="flex items-center justify-between px-4 py-3 text-xs transition-all"
             >
               <div class="flex items-center gap-3">
-                <UserCircle class="w-4 h-4" />
+                <UserCog class="w-4 h-4" />
                 <span>Users</span>
+              </div>
+              <ChevronRight class="w-4 h-4 text-gray-400" />
+            </router-link>
+
+            <router-link 
+              to="/profile" 
+              @click="closeSidebar"
+              active-class="bg-app-bg text-gray-900 font-semibold rounded-xl"
+              class="flex items-center justify-between px-4 py-3 text-xs transition-all"
+            >
+              <div class="flex items-center gap-3">
+                <UserCircle class="w-4 h-4" />
+                <span>Profil</span>
               </div>
               <ChevronRight class="w-4 h-4 text-gray-400" />
             </router-link>
           </nav>
 
           <div class="pt-3 mt-2 border-t border-gray-100 px-4">
-            <button class="flex items-center justify-end gap-2.5 text-red-500 font-normal text-xs w-full cursor-pointer">
+            <button @click="openLogoutModal" type="button" class="flex items-center justify-end gap-2.5 text-red-500 font-normal text-xs w-full cursor-pointer">
               <LogOut class="w-4 h-4" />
               <span>Log Out</span>
             </button>
@@ -196,8 +245,21 @@ const closeSidebar = () => {
               class="flex items-center justify-between px-4 py-3 transition-all group"
             >
               <div class="flex items-center gap-3">
-                <UserCircle class="w-4 h-4" />
+                <UserCog class="w-4 h-4" />
                 <span class="text-xs font-normal">Users</span>
+              </div>
+              <ChevronRight class="w-4 h-4" />
+            </router-link>
+
+            <!-- Profil -->
+            <router-link 
+              to="/profile" 
+              active-class="bg-app-bg text-gray-900 shadow-sm rounded-l-full font-normal"
+              class="flex items-center justify-between px-4 py-3 transition-all group"
+            >
+              <div class="flex items-center gap-3">
+                <UserCircle class="w-4 h-4" />
+                <span class="text-xs font-normal">Profil</span>
               </div>
               <ChevronRight class="w-4 h-4" />
             </router-link>
@@ -206,7 +268,7 @@ const closeSidebar = () => {
 
           <!-- Bottom Menu: Log Out -->
           <div class="px-2">
-            <button class="flex items-center justify-end gap-2.5 text-red-500 font-normal text-sm hover:opacity-80 transition w-full cursor-pointer">
+            <button @click="openLogoutModal" type="button" class="flex items-center justify-end gap-2.5 text-red-500 font-normal text-sm hover:opacity-80 transition w-full cursor-pointer">
               <LogOut class="w-4 h-4" />
               <span>Log Out</span>
             </button>
@@ -219,5 +281,45 @@ const closeSidebar = () => {
         <slot></slot>
       </main>
     </div>
+
+    <!-- Popup Konfirmasi Logout -->
+    <Teleport to="body">
+      <div 
+        v-if="isLogoutModalOpen" 
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+      >
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs sm:max-w-sm overflow-hidden">
+          <div class="bg-app-primary2 px-5 py-3">
+            <h3 class="text-white font-semibold text-sm">Konfirmasi Keluar</h3>
+          </div>
+
+          <div class="p-5 space-y-4">
+            <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">
+              Apakah Anda yakin ingin keluar dari akun ini?
+            </p>
+
+            <div class="flex items-center justify-end gap-2 pt-1">
+              <button 
+                type="button" 
+                @click="closeLogoutModal" 
+                :disabled="isLoggingOut"
+                class="px-4 py-2 rounded-xl text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition disabled:opacity-50 cursor-pointer"
+              >
+                Batal
+              </button>
+              <button 
+                type="button" 
+                @click="confirmLogout" 
+                :disabled="isLoggingOut"
+                class="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-red-600 hover:bg-red-700 transition disabled:opacity-50 cursor-pointer"
+              >
+                {{ isLoggingOut ? 'Keluar...' : 'Ya, Keluar' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
   </div>
 </template>

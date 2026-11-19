@@ -378,7 +378,7 @@ const formatText = (text) => {
                     <form @submit.prevent="submitForm" class="p-6 space-y-2">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium mb-1.5">Nama User</label>
+                                <label class="block text-xs font-medium mb-1.5">Nama Lengkap</label>
                                 <input v-model="form.namaUser" :disabled="isSubmitting" type="text" class="w-full bg-app-bg rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#427AA1] outline-none disabled:opacity-60">
                             </div>
 

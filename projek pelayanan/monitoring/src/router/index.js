@@ -4,6 +4,7 @@ import DaftarPelanggan from '../components/daftar_pelanggan.vue'
 import DetailPelanggan from '../components/detail_pelanggan.vue'
 import History from '../components/history.vue'
 import Profile from '../components/profile.vue'
+import Login from '../components/login.vue'
 
 const routes = [
   {path: '/dashboard', name: 'Dashboard', component: Dashboard},
@@ -11,6 +12,8 @@ const routes = [
   {path: '/detail_pelanggan/:id', name: 'Detail-Pelanggan', component: DetailPelanggan},
   {path: '/history', name: 'History', component: History},
   {path: '/profile', name: 'Profile', component: Profile},
+  { path: '/', redirect: '/login' },
+  { path: '/login', name: 'Login', component: Login },
 ]
 
 const router = createRouter({
